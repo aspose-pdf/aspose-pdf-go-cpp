@@ -218,6 +218,23 @@ func (document *Document) Grayscale() error {
 	}
 }
 
+// Flatten flattens PDF-document.
+//
+// Example:
+//
+//	err := pdf.Flatten()
+func (document *Document) Flatten() error {
+	var err *C.char
+	C.PDFDocument_Flatten(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // SetBackground sets PDF-document background color.
 //
 // Example:
@@ -505,6 +522,120 @@ func (document *Document) SaveTeX(filename string) error {
 	_filename := C.CString(filename)
 	defer C.free(unsafe.Pointer(_filename))
 	C.PDFDocument_Save_TeX(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SaveMarkdown saves previously opened PDF-document as Markdown-document with filename.
+//
+// Example:
+//
+//	err := pdf.SaveMarkdown("filename.md")
+func (document *Document) SaveMarkdown(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Save_Markdown(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SaveBooklet saves previously opened PDF-document as booklet PDF-document with filename.
+//
+// Example:
+//
+//	err := pdf.SaveBooklet("filename.pdf")
+func (document *Document) SaveBooklet(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Save_Booklet(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SaveNUp saves previously opened PDF-document as N-Up PDF-document with filename.
+//
+// Example:
+//
+//	err := pdf.SaveNUp("filename.pdf", 2, 2)
+func (document *Document) SaveNUp(filename string, columns int32, rows int32) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Save_NUp(document.pdf, _filename, C.int(columns), C.int(rows), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// ExportFdf exports from previously opened PDF-document with AcroForm to FDF-document with filename.
+//
+// Example:
+//
+//	err := pdf.ExportFdf("filename.fdf")
+func (document *Document) ExportFdf(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Export_Fdf(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// ExportXfdf exports from previously opened PDF-document with AcroForm to XFDF-document with filename.
+//
+// Example:
+//
+//	err := pdf.ExportXfdf("filename.xfdf")
+func (document *Document) ExportXfdf(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Export_Xfdf(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// ExportXml exports from previously opened PDF-document with AcroForm to XML-document with filename.
+//
+// Example:
+//
+//	err := pdf.ExportXml("filename.xml")
+func (document *Document) ExportXml(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Export_Xml(document.pdf, _filename, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
