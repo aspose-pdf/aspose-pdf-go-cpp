@@ -235,6 +235,125 @@ func (document *Document) Flatten() error {
 	}
 }
 
+// RemoveAnnotations removes annotations from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveAnnotations()
+func (document *Document) RemoveAnnotations() error {
+	var err *C.char
+	C.PDFDocument_RemoveAnnotations(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveAttachments removes attachments from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveAttachments()
+func (document *Document) RemoveAttachments() error {
+	var err *C.char
+	C.PDFDocument_RemoveAttachments(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveBlankPages removes blank pages from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveBlankPages()
+func (document *Document) RemoveBlankPages() error {
+	var err *C.char
+	C.PDFDocument_RemoveBlankPages(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveBookmarks removes bookmarks from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveBookmarks()
+func (document *Document) RemoveBookmarks() error {
+	var err *C.char
+	C.PDFDocument_RemoveBookmarks(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveHiddenText removes hidden text from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveHiddenText()
+func (document *Document) RemoveHiddenText() error {
+	var err *C.char
+	C.PDFDocument_RemoveHiddenText(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveImages removes images from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveImages()
+func (document *Document) RemoveImages() error {
+	var err *C.char
+	C.PDFDocument_RemoveImages(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveJavaScripts removes java scripts from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveJavaScripts()
+func (document *Document) RemoveJavaScripts() error {
+	var err *C.char
+	C.PDFDocument_RemoveJavaScripts(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // SetBackground sets PDF-document background color.
 //
 // Example:
@@ -645,6 +764,23 @@ func (document *Document) ExportXml(filename string) error {
 	}
 }
 
+// Append appends pages from another PDF-document.
+//
+// Example:
+//
+//	err := pdf.Append(anotherdoc)
+func (document *Document) Append(anotherdocument *Document) error {
+	var err *C.char
+	C.PDFDocument_Append(document.pdf, anotherdocument.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:
@@ -1034,6 +1170,57 @@ func (document *Document) PageAddTextFooter(num int32, footer string) error {
 	_footer := C.CString(footer)
 	defer C.free(unsafe.Pointer(_footer))
 	C.PDFDocument_Page_AddTextFooter(document.pdf, C.int(num), _footer, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveAnnotations removes annotations in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveAnnotations(1)
+func (document *Document) PageRemoveAnnotations(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveAnnotations(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveHiddenText removes hidden text in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveHiddenText(1)
+func (document *Document) PageRemoveHiddenText(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveHiddenText(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveImages removes images in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveImages(1)
+func (document *Document) PageRemoveImages(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveImages(document.pdf, C.int(num), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

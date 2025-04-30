@@ -27,6 +27,13 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_OptimizeResource(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Grayscale(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Flatten(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveAnnotations(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveAttachments(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveBlankPages(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveBookmarks(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveHiddenText(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveImages(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_RemoveJavaScripts(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_set_Background(void* pdfdocumentclass, int r, int g, int b, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Rotate(void* pdfdocumentclass, int rotation, const char** error);
     ASPOSE_PDF_RUST_SHARED_API int PDFDocument_get_WordCount(void* pdfdocumentclass, const char** error);
@@ -49,6 +56,7 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Fdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xfdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xml(void* pdfdocumentclass, const char* filename, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Append(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);
@@ -71,6 +79,9 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_AddPageNum(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_AddTextHeader(void* pdfdocumentclass, int num, const char* header, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_AddTextFooter(void* pdfdocumentclass, int num, const char* footer, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_RemoveAnnotations(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_RemoveHiddenText(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_RemoveImages(void* pdfdocumentclass, int num, const char** error);
 
 #ifdef __cplusplus
 }

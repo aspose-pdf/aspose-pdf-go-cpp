@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -116,4 +117,259 @@ func TestStats(t *testing.T) {
 	// First page is blank? No. Evaluation stamp
 	page_is_blank, _ := pdf.PageIsBlank(1)
 	assert_eq(t, page_is_blank, false)
+}
+
+func TestAppend(t *testing.T) {
+	// Create the first PDF-document
+	pdf1, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf1.Close()
+
+	// Add two empty pages to the first PDF-document
+	for i := 0; i < 2; i++ {
+		_ = pdf1.PageAdd()
+	}
+
+	// Check the page count in the first PDF-document (should be 2 pages)
+	page_count1, _ := pdf1.PageCount()
+	assert_eq(t, page_count1, int32(2))
+
+	// Create the second PDF-document
+	pdf2, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf2.Close()
+
+	// Add two empty pages to the second PDF-document
+	for i := 0; i < 2; i++ {
+		_ = pdf2.PageAdd()
+	}
+
+	// Check the page count in the second PDF-document (should be 2 pages)
+	page_count2, _ := pdf2.PageCount()
+	assert_eq(t, page_count2, int32(2))
+
+	// Append pages from the second PDF-document to the first
+	err = pdf1.Append(pdf2)
+	if err != nil {
+		t.Errorf("Append(): %v", err)
+	}
+
+	// Check the page count in the first PDF-document after appending (should be 4 pages)
+	page_count1_after_append, _ := pdf1.PageCount()
+	assert_eq(t, page_count1_after_append, int32(4))
+}
+
+func TestExtractText(t *testing.T) {
+	// Create a new document
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Add a page and some text
+	if err := doc.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+	expectedText := "This is a test text for extraction"
+	if err := doc.PageAddText(1, expectedText); err != nil {
+		t.Fatalf("PageAddText(): %v", err)
+	}
+
+	// Save to apply changes
+	if err := doc.Save(); err != nil {
+		t.Fatalf("Save(): %v", err)
+	}
+
+	// Extract text
+	extracted, err := doc.ExtractText()
+	if err != nil {
+		t.Fatalf("ExtractText(): %v", err)
+	}
+
+	// Validate that extracted text contains the inserted text
+	if len(extracted) == 0 {
+		t.Errorf("Extracted text is empty")
+	}
+	if !strings.Contains(extracted, "test text") {
+		t.Errorf("Extracted text does not contain expected content.\nGot: %s", extracted)
+	}
+}
+
+func TestConvertFromPDF(t *testing.T) {
+	type conversion struct {
+		name string
+		fn   func(doc *Document, path string) error
+	}
+
+	conversions := []conversion{
+		{"SaveDocX", func(doc *Document, path string) error { return doc.SaveDocX(path) }},
+		{"SaveDoc", func(doc *Document, path string) error { return doc.SaveDoc(path) }},
+		{"SaveXlsX", func(doc *Document, path string) error { return doc.SaveXlsX(path) }},
+		{"SaveTxt", func(doc *Document, path string) error { return doc.SaveTxt(path) }},
+		{"SavePptX", func(doc *Document, path string) error { return doc.SavePptX(path) }},
+		{"SaveXps", func(doc *Document, path string) error { return doc.SaveXps(path) }},
+		{"SaveTeX", func(doc *Document, path string) error { return doc.SaveTeX(path) }},
+		{"SaveEpub", func(doc *Document, path string) error { return doc.SaveEpub(path) }},
+		{"SaveBooklet", func(doc *Document, path string) error { return doc.SaveBooklet(path) }},
+		{"SaveNUp", func(doc *Document, path string) error { return doc.SaveNUp(path, 2, 2) }},
+		{"SaveMarkdown", func(doc *Document, path string) error { return doc.SaveMarkdown(path) }},
+		{"ExportFdf", func(doc *Document, path string) error { return doc.ExportFdf(path) }},
+		{"ExportXfdf", func(doc *Document, path string) error { return doc.ExportXfdf(path) }},
+		{"ExportXml", func(doc *Document, path string) error { return doc.ExportXml(path) }},
+		{"PageToJpg", func(doc *Document, path string) error { return doc.PageToJpg(1, 150, path) }},
+		{"PageToPng", func(doc *Document, path string) error { return doc.PageToPng(1, 150, path) }},
+		{"PageToBmp", func(doc *Document, path string) error { return doc.PageToBmp(1, 150, path) }},
+		{"PageToTiff", func(doc *Document, path string) error { return doc.PageToTiff(1, 150, path) }},
+		{"PageToSvg", func(doc *Document, path string) error { return doc.PageToSvg(1, path) }},
+		{"PageToPdf", func(doc *Document, path string) error { return doc.PageToPdf(1, path) }},
+		{"PageToDICOM", func(doc *Document, path string) error { return doc.PageToDICOM(1, 150, path) }},
+	}
+
+	for _, conv := range conversions {
+		t.Run(conv.name, func(t *testing.T) {
+			// Create new document
+			doc, err := New()
+			if err != nil {
+				t.Fatalf("New(): %v", err)
+			}
+			defer doc.Close()
+
+			// Add one page with text
+			if err := doc.PageAdd(); err != nil {
+				t.Fatalf("PageAdd(): %v", err)
+			}
+			if err := doc.PageAddText(1, fmt.Sprintf("Test conversion for %s", conv.name)); err != nil {
+				t.Fatalf("PageAddText(): %v", err)
+			}
+
+			// Save document before conversion
+			if err := doc.Save(); err != nil {
+				t.Fatalf("Save(): %v", err)
+			}
+
+			// Prepare output path
+			outputPath := fmt.Sprintf("%s/output", t.TempDir())
+
+			// Call conversion function
+			if err := conv.fn(doc, outputPath); err != nil {
+				t.Errorf("%s failed: %v", conv.name, err)
+			}
+
+			// Check file was created and is non-zero
+			info, err := os.Stat(outputPath)
+			if err != nil {
+				t.Errorf("Stat(%s): %v", outputPath, err)
+			} else {
+				assert_ne(t, int64(0), info.Size())
+			}
+		})
+	}
+}
+
+func TestOrganize(t *testing.T) {
+	type organizeFunction struct {
+		name string
+		fn   func(doc *Document) error
+	}
+
+	organizeFunctions := []organizeFunction{
+		{"Optimize", (*Document).Optimize},
+		{"OptimizeResource", (*Document).OptimizeResource},
+		{"Grayscale", (*Document).Grayscale},
+		{"Rotate", func(doc *Document) error { return doc.Rotate(RotationOn270) }},
+		{"SetBackground", func(doc *Document) error { return doc.SetBackground(255, 255, 200) }},
+		{"ReplaceText", func(doc *Document) error {
+			_ = doc.PageAddText(1, "Hello World")
+			return doc.ReplaceText("Hello", "Hi")
+		}},
+		{"AddPageNum", (*Document).AddPageNum},
+		{"AddTextHeader", func(doc *Document) error { return doc.AddTextHeader("Header") }},
+		{"AddTextFooter", func(doc *Document) error { return doc.AddTextFooter("Footer") }},
+		{"Flatten", (*Document).Flatten},
+		{"RemoveAnnotations", (*Document).RemoveAnnotations},
+		{"RemoveAttachments", (*Document).RemoveAttachments},
+		{"RemoveBlankPages", (*Document).RemoveBlankPages},
+		{"RemoveBookmarks", (*Document).RemoveBookmarks},
+		{"RemoveHiddenText", (*Document).RemoveHiddenText},
+		{"RemoveImages", (*Document).RemoveImages},
+		{"RemoveJavaScripts", (*Document).RemoveJavaScripts},
+		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
+		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
+		{"PageGrayscale", func(doc *Document) error { return doc.PageGrayscale(1) }},
+		{"PageAddText", func(doc *Document) error { return doc.PageAddText(1, "Page-level text") }},
+		{"PageReplaceText", func(doc *Document) error {
+			_ = doc.PageAddText(1, "Replace me")
+			return doc.PageReplaceText(1, "Replace", "Changed")
+		}},
+		{"PageAddPageNum", func(doc *Document) error { return doc.PageAddPageNum(1) }},
+		{"PageAddTextHeader", func(doc *Document) error { return doc.PageAddTextHeader(1, "Page Header") }},
+		{"PageAddTextFooter", func(doc *Document) error { return doc.PageAddTextFooter(1, "Page Footer") }},
+		{"PageRemoveAnnotations", func(doc *Document) error { return doc.PageRemoveAnnotations(1) }},
+		{"PageRemoveHiddenText", func(doc *Document) error { return doc.PageRemoveHiddenText(1) }},
+		{"PageRemoveImages", func(doc *Document) error { return doc.PageRemoveImages(1) }},
+	}
+
+	for _, test := range organizeFunctions {
+		t.Run(test.name, func(t *testing.T) {
+			doc, err := New()
+			if err != nil {
+				t.Fatalf("New(): %v", err)
+			}
+			defer doc.Close()
+
+			if err := doc.PageAdd(); err != nil {
+				t.Fatalf("PageAdd(): %v", err)
+			}
+
+			if err := test.fn(doc); err != nil {
+				t.Errorf("%s(): %v", test.name, err)
+			}
+
+			outputPath := fmt.Sprintf("%s/output.pdf", t.TempDir())
+			if err := doc.SaveAs(outputPath); err != nil {
+				t.Errorf("SaveAs(): %v", err)
+			}
+
+			info, err := os.Stat(outputPath)
+			if err != nil {
+				t.Errorf("Stat(%s): %v", outputPath, err)
+			} else {
+				assert_ne(t, int64(0), info.Size())
+			}
+		})
+	}
+}
+
+func TestRepair(t *testing.T) {
+
+	tmpDir := t.TempDir()
+	filePath := fmt.Sprintf("%s/input.pdf", tmpDir)
+
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	if err := doc.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+	if err := doc.SaveAs(filePath); err != nil {
+		t.Fatalf("SaveAs(%s): %v", filePath, err)
+	}
+
+	reopenDoc, err := Open(filePath)
+	if err != nil {
+		t.Fatalf("Open(%s): %v", filePath, err)
+	}
+	defer reopenDoc.Close()
+
+	if err := reopenDoc.Repair(); err != nil {
+		t.Errorf("Repair(): %v", err)
+	}
 }
