@@ -6,8 +6,13 @@ package asposepdf
 #include "extern_c.h"
 */
 import "C"
-import "unsafe"
-import "errors"
+
+import (
+	"errors"
+	"fmt"
+	"strings"
+	"unsafe"
+)
 
 // Document represents a PDF-document.
 type Document struct {
@@ -58,6 +63,128 @@ func Open(filename string) (*Document, error) {
 	} else {
 		return &Document{nil}, errors.New(err_str)
 	}
+}
+
+// MergeDocuments creates a new PDF-document by merging the provided documents.
+//
+// Example:
+//
+//		pdf_merged, err := MergeDocuments([]*Document{pdf1, pdf2})
+//		if err != nil {
+//			fmt.Errorf("MergeDocuments(): %v", err)
+//		} else {
+//	 		// working with new merged PDF-document
+//		}
+func MergeDocuments(documents []*Document) (*Document, error) {
+	if len(documents) == 0 {
+		return nil, errors.New("MergeDocuments(): no documents to merge")
+	}
+
+	// Create a new empty PDF document
+	merged, err := New()
+	if err != nil {
+		return nil, fmt.Errorf("MergeDocuments(): failed to create new document: %w", err)
+	}
+
+	// Append each input document to the merged document
+	for i, document := range documents {
+		if document == nil || document.pdf == nil {
+			return nil, fmt.Errorf("MergeDocuments(): document at index %d is nil or invalid", i)
+		}
+		if err := merged.Append(document); err != nil {
+			return nil, fmt.Errorf("MergeDocuments(): failed to append document at index %d: %w", i, err)
+		}
+	}
+
+	return merged, nil
+}
+
+// SplitDocument creates a new PDF-document by merging the provided PDF-documents.
+// Each part of the pagerange string (separated by `;`) defines the page range for a new PDF-document.
+//
+// Example:
+//
+//	pdfs, err := asposepdf.SplitDocument(pdf_source, "1-2;3;4-")
+//	// pdfs[0] will contain pages 1-2, pdfs[1] page 3, pdfs[2] pages 4 to end.
+func SplitDocument(document *Document, pagerange string) ([]*Document, error) {
+	if document == nil || document.pdf == nil {
+		return nil, errors.New("SplitDocument: source document is nil or invalid")
+	}
+
+	if pagerange == "" {
+		return nil, errors.New("SplitDocument: empty page range string")
+	}
+
+	parts := strings.Split(pagerange, ";")
+	result := make([]*Document, 0, len(parts))
+
+	for i, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			return nil, fmt.Errorf("SplitDocument: empty page range at index %d", i)
+		}
+
+		newdoc, err := New()
+		if err != nil {
+			return nil, fmt.Errorf("SplitDocument: failed to create new document for range %q: %w", part, err)
+		}
+
+		if err := newdoc.AppendPages(document, part); err != nil {
+			return nil, fmt.Errorf("SplitDocument: failed to append pages %q: %w", part, err)
+		}
+
+		result = append(result, newdoc)
+	}
+
+	return result, nil
+}
+
+// SplitAtPage splits the PDF-document into two new PDF-documents.
+// The first document includes pages 1 to 'page' (inclusive).
+// The second document includes pages from 'page+1' to the end.
+//
+// Example:
+//
+//	left, right, err := SplitAtPage(source, 3)
+//	// 'left' contains pages 1–3, 'right' contains pages 4 to end
+func SplitAtPage(document *Document, page int) (*Document, *Document, error) {
+	if document == nil || document.pdf == nil {
+		return nil, nil, errors.New("SplitAtPage: source document is nil or invalid")
+	}
+
+	pageCount, err := document.PageCount()
+	if err != nil {
+		return nil, nil, fmt.Errorf("SplitAtPage: failed to get page count: %w", err)
+	}
+
+	if page < 1 || page >= int(pageCount) {
+		return nil, nil, fmt.Errorf("SplitAtPage: page %d is out of valid range (1-%d exclusive)", page, pageCount)
+	}
+
+	// Create first document for pages 1 to page
+	left, err := New()
+	if err != nil {
+		return nil, nil, fmt.Errorf("SplitAtPage: failed to create first document: %w", err)
+	}
+
+	if err := left.AppendPages(document, fmt.Sprintf("1-%d", page)); err != nil {
+		return nil, nil, fmt.Errorf("SplitAtPage: failed to append left pages: %w", err)
+	}
+
+	// Create second document for pages page+1 to end
+	right, err := New()
+	if err != nil {
+		left.Close() // Clean up the first one
+		return nil, nil, fmt.Errorf("SplitAtPage: failed to create second document: %w", err)
+	}
+
+	if err := right.AppendPages(document, fmt.Sprintf("%d-", page+1)); err != nil {
+		left.Close()
+		right.Close()
+		return nil, nil, fmt.Errorf("SplitAtPage: failed to append right pages: %w", err)
+	}
+
+	return left, right, nil
 }
 
 // Close releases allocated resources for PDF-document.
@@ -772,6 +899,25 @@ func (document *Document) ExportXml(filename string) error {
 func (document *Document) Append(anotherdocument *Document) error {
 	var err *C.char
 	C.PDFDocument_Append(document.pdf, anotherdocument.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// AppendPages appends selected pages from another PDF-document.
+//
+// Example:
+//
+//	err := pdf.AppendPages(anotherdoc, "-2,4,6-8,10-")
+func (document *Document) AppendPages(anotherdocument *Document, pagerange string) error {
+	var err *C.char
+	_pagerange := C.CString(pagerange)
+	defer C.free(unsafe.Pointer(_pagerange))
+	C.PDFDocument_AppendPages(document.pdf, anotherdocument.pdf, _pagerange, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

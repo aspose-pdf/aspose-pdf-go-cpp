@@ -7,17 +7,22 @@ Contains unique features for converting PDF to other formats.
 
 ### PDF Processing
 
-- **Core operation:** New, Open, Save, SaveAs, Close, SetLicense, WordCount, CharacterCount
-- **Page core operation:** Add, Insert, Delete, Count, WordCount, CharacterCount, IsBlank
-- **Organize:** Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair
+- **Main core operation:** New, Open, Save, SaveAs, Close, SetLicense, Append, AppendPages, MergeDocuments, SplitDocument, SplitAtPage
+- **Other core operation:** WordCount, CharacterCount
+- **Page main core operation:** Add, Insert, Delete, Count
+- **Page other core operation:** WordCount, CharacterCount, IsBlank
+- **Organize:** Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten
 - **Page organize:** Rotate, SetSize, Grayscale, AddText
+- **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveJavaScripts
+- **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages
 - **Others:** Get contents as plain text
 
 ### PDF converting and saving
 
 - **Microsoft Office:** DOC, DOCX, XLSX, PPTX
 - **Images:** JPEG, PNG, BMP, TIFF
-- **Others:** EPUB, DICOM, SVG, XPS, TEX, TXT
+- **Others:** EPUB, DICOM, SVG, XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
+- **Export with AcroForm:** FDF, XFDF, XML
 
 ## Platforms
 

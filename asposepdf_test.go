@@ -65,6 +65,124 @@ func TestNewAndSave(t *testing.T) {
 	assert_ne(t, int64(0), fi.Size())
 }
 
+func TestMergeDocuments(t *testing.T) {
+	// Create the first PDF-document
+	pdf1, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf1.Close()
+
+	// Add one empty page to the first PDF-document
+	_ = pdf1.PageAdd()
+
+	// Create the second PDF-document
+	pdf2, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf2.Close()
+
+	// Add one empty page to the second PDF-document
+	_ = pdf2.PageAdd()
+
+	// Create the third PDF-document
+	pdf3, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf3.Close()
+
+	// Add two empty pages to the third PDF-document
+	for i := 0; i < 2; i++ {
+		_ = pdf3.PageAdd()
+	}
+
+	// Merge all three documents
+	mergedDoc, err := MergeDocuments([]*Document{pdf1, pdf2, pdf3})
+	if err != nil {
+		t.Errorf("MergeDocuments(): %v", err)
+	}
+	defer mergedDoc.Close()
+
+	// Check the page count in the merged document (should be 4 pages)
+	mergedPageCount, err := mergedDoc.PageCount()
+	if err != nil {
+		t.Errorf("PageCount(): %v", err)
+	}
+	assert_eq(t, mergedPageCount, int32(4))
+}
+
+func TestSplitDocument(t *testing.T) {
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	for i := 0; i < 4; i++ {
+		_ = pdf.PageAdd()
+	}
+
+	// Split the PDF-document into 3 parts: pages 1-2, page 3, pages 4 to end
+	pdfs, err := SplitDocument(pdf, "1-2;3;4-")
+	if err != nil {
+		t.Errorf("SplitDocument(): %v", err)
+	}
+
+	if len(pdfs) != 3 {
+		t.Errorf("expected 3 split documents, got %d", len(pdfs))
+	}
+
+	// Defer closing all PDF-documents
+	for _, doc := range pdfs {
+		defer doc.Close()
+	}
+
+	// Check page counts for each resulting PDF-document
+	if len(pdfs) == 3 {
+		count1, _ := pdfs[0].PageCount()
+		assert_eq(t, count1, int32(2))
+
+		count2, _ := pdfs[1].PageCount()
+		assert_eq(t, count2, int32(1))
+
+		count3, _ := pdfs[2].PageCount()
+		assert_eq(t, count3, int32(1))
+	}
+}
+
+func TestSplitAtPage(t *testing.T) {
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	for i := 0; i < 4; i++ {
+		_ = pdf.PageAdd()
+	}
+
+	// Split the PDF-document into two parts: first 2 pages, and remaining pages
+	left, right, err := SplitAtPage(pdf, 2)
+	if err != nil {
+		t.Errorf("SplitAtPage(): %v", err)
+	}
+
+	// Defer closing both PDF-documents
+	defer left.Close()
+	defer right.Close()
+
+	// Check page counts for each resulting PDF-document
+	countLeft, _ := left.PageCount()
+	assert_eq(t, countLeft, int32(2))
+
+	countRight, _ := right.PageCount()
+	assert_eq(t, countRight, int32(2))
+}
+
 func TestPages(t *testing.T) {
 
 	pdf, _ := New()
@@ -161,6 +279,59 @@ func TestAppend(t *testing.T) {
 	// Check the page count in the first PDF-document after appending (should be 4 pages)
 	page_count1_after_append, _ := pdf1.PageCount()
 	assert_eq(t, page_count1_after_append, int32(4))
+}
+
+func TestAppendPages(t *testing.T) {
+	// Create a PDF document with exactly 4 pages
+	pdf4pages, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf4pages.Close()
+
+	for i := 0; i < 4; i++ {
+		_ = pdf4pages.PageAdd()
+	}
+
+	page_count, _ := pdf4pages.PageCount()
+	assert_eq(t, page_count, int32(4))
+
+	tests := []struct {
+		name      string
+		pagerange string
+		wantPages int32
+	}{
+		{"EmptyRangeMeansAll", "", 4},
+		{"DashMeansAll", "-", 4},
+		{"FirstThreePages", "-3", 3},
+		{"SecondToEnd", "2-", 3},
+		{"SpecificPages134", "1,3,4", 3},
+		{"OnlyPage2", "2", 1},
+		{"Range2To3", "2-3", 2},
+		{"NonSequential", "1,2,4", 3},
+		{"AllPagesExplicit", "1,2,3,4", 4},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a new empty document for each test case
+			pdftest, err := New()
+			if err != nil {
+				t.Fatalf("New(): %v", err)
+			}
+			defer pdftest.Close()
+
+			// Append selected pages from pdf4pages
+			err = pdftest.AppendPages(pdf4pages, tt.pagerange)
+			if err != nil {
+				t.Errorf("AppendPages(%q): %v", tt.pagerange, err)
+			}
+
+			// Check that the page count matches expected result
+			count, _ := pdftest.PageCount()
+			assert_eq(t, count, tt.wantPages)
+		})
+	}
 }
 
 func TestExtractText(t *testing.T) {
