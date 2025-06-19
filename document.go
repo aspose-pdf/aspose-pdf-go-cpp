@@ -927,6 +927,28 @@ func (document *Document) AppendPages(anotherdocument *Document, pagerange strin
 	}
 }
 
+// Bytes returns the contents of the PDF-document as a byte slice.
+//
+// Example:
+//
+//	bytes, err := pdf.Bytes()
+func (document *Document) Bytes() ([]byte, error) {
+	var err *C.char
+	var buf *C.uchar
+	var size C.int
+
+	C.PDFDocument_Save_Memory(document.pdf, &buf, &size, &err)
+	defer C.c_free_string(err)
+
+	err_str := C.GoString(err)
+	if err_str != "" || buf == nil || size == 0 {
+		return nil, fmt.Errorf("failed to get PDF bytes: %s", err_str)
+	}
+
+	defer C.c_free_buffer(unsafe.Pointer(buf))
+	return C.GoBytes(unsafe.Pointer(buf), size), nil
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:

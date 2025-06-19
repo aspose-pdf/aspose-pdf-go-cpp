@@ -58,6 +58,7 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xml(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Append(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_AppendPages(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char* pagerange, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_Memory(void* pdfdocumentclass, unsigned char** bufferOut, int* sizeOut, const char** error);
     ASPOSE_PDF_RUST_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);
@@ -92,6 +93,7 @@ extern "C" {
 extern "C" {
 #endif
     ASPOSE_PDF_RUST_SHARED_API void c_free_string(char* str);
+    ASPOSE_PDF_RUST_SHARED_API void c_free_buffer(void* buffer);
 #ifdef __cplusplus
 }
 #endif

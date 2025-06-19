@@ -8,7 +8,7 @@ Contains unique features for converting PDF to other formats.
 ### PDF Processing
 
 - **Main core operation:** New, Open, Save, SaveAs, Close, SetLicense, Append, AppendPages, MergeDocuments, SplitDocument, SplitAtPage
-- **Other core operation:** WordCount, CharacterCount
+- **Other core operation:** WordCount, CharacterCount, Bytes
 - **Page main core operation:** Add, Insert, Delete, Count
 - **Page other core operation:** WordCount, CharacterCount, IsBlank
 - **Organize:** Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten

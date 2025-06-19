@@ -544,3 +544,20 @@ func TestRepair(t *testing.T) {
 		t.Errorf("Repair(): %v", err)
 	}
 }
+
+func TestBytes(t *testing.T) {
+
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	data, err := pdf.Bytes()
+	if err != nil {
+		t.Fatalf("Bytes(): %v", err)
+	}
+
+	// Assert that the byte slice is not empty
+	assert_ne(t, int64(0), int64(len(data)))
+}
