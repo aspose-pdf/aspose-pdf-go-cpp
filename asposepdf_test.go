@@ -389,6 +389,8 @@ func TestConvertFromPDF(t *testing.T) {
 		{"SaveBooklet", func(doc *Document, path string) error { return doc.SaveBooklet(path) }},
 		{"SaveNUp", func(doc *Document, path string) error { return doc.SaveNUp(path, 2, 2) }},
 		{"SaveMarkdown", func(doc *Document, path string) error { return doc.SaveMarkdown(path) }},
+		{"SaveTiff", func(doc *Document, path string) error { return doc.SaveTiff(path) }},
+		{"SaveTiffWithDPI", func(doc *Document, path string) error { return doc.SaveTiff(path, 150) }},
 		{"ExportFdf", func(doc *Document, path string) error { return doc.ExportFdf(path) }},
 		{"ExportXfdf", func(doc *Document, path string) error { return doc.ExportXfdf(path) }},
 		{"ExportXml", func(doc *Document, path string) error { return doc.ExportXml(path) }},

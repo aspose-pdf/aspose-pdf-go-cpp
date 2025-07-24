@@ -834,6 +834,29 @@ func (document *Document) SaveNUp(filename string, columns int32, rows int32) er
 	}
 }
 
+// SaveTiff saves previously opened PDF-document as Tiff-document with filename.
+//
+// Example:
+//
+//	err := pdf.SaveTiff("filename.tiff")
+func (document *Document) SaveTiff(filename string, resolution_dpi ...int32) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	_resolution_dpi := C.int(100)
+	defer C.free(unsafe.Pointer(_filename))
+	if len(resolution_dpi) > 0 {
+		_resolution_dpi = C.int(resolution_dpi[0])
+	}
+	C.PDFDocument_Save_Tiff(document.pdf, _resolution_dpi, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // ExportFdf exports from previously opened PDF-document with AcroForm to FDF-document with filename.
 //
 // Example:
