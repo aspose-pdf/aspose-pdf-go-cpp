@@ -54,6 +54,7 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_Booklet(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_NUp(void* pdfdocumentclass, const char* filename, int columns, int rows, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_Tiff(void* pdfdocumentclass, int resolutionDPI, const char* filename, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_DocXEnhanced(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Fdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xfdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xml(void* pdfdocumentclass, const char* filename, const char** error);

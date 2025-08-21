@@ -379,6 +379,7 @@ func TestConvertFromPDF(t *testing.T) {
 
 	conversions := []conversion{
 		{"SaveDocX", func(doc *Document, path string) error { return doc.SaveDocX(path) }},
+		{"SaveDocXEnhanced", func(doc *Document, path string) error { return doc.SaveDocXEnhanced(path) }},
 		{"SaveDoc", func(doc *Document, path string) error { return doc.SaveDoc(path) }},
 		{"SaveXlsX", func(doc *Document, path string) error { return doc.SaveXlsX(path) }},
 		{"SaveTxt", func(doc *Document, path string) error { return doc.SaveTxt(path) }},

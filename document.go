@@ -644,6 +644,25 @@ func (document *Document) SaveDocX(filename string) error {
 	}
 }
 
+// SaveDocXEnhanced saves previously opened PDF-document as Enhanced Recognition Mode DocX-document with filename.
+//
+// Example:
+//
+//	err := pdf.SaveDocXEnhanced("filename.docx")
+func (document *Document) SaveDocXEnhanced(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Save_DocXEnhanced(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // SaveDoc saves previously opened PDF-document as Doc-document with filename.
 //
 // Example:

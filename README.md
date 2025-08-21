@@ -19,7 +19,7 @@ Contains unique features for converting PDF to other formats.
 
 ### PDF converting and saving
 
-- **Microsoft Office:** DOC, DOCX, XLSX, PPTX
+- **Microsoft Office:** DOC, DOCX, XLSX, PPTX, DOCX with Enhanced Recognition Mode (fully editable tables and paragraphs)
 - **Images:** JPEG, PNG, BMP, TIFF
 - **Others:** EPUB, DICOM, SVG, XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
 - **Export with AcroForm:** FDF, XFDF, XML
