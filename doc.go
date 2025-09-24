@@ -5,16 +5,24 @@
 // Features
 //
 //	PDF Processing
-//	 Core operation: New, Open, Save, SaveAs, Close, SetLicense, WordCount, CharacterCount
-//	 Page core operation: Add, Insert, Delete, Count, WordCount, CharacterCount, IsBlank
-//	 Organize: Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair
+//	 Main core operation: New, Open, Save, SaveAs, Close, SetLicense, Append, AppendPages, MergeDocuments, SplitDocument, SplitAtPage
+//	 Other core operation: WordCount, CharacterCount, Bytes
+//	 Page main core operation: Add, Insert, Delete, Count
+//	 Page other core operation: WordCount, CharacterCount, IsBlank
+//	 Organize: Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten
 //	 Page organize: Rotate, SetSize, Grayscale, AddText
+//	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveJavaScripts
+//	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages
 //	 Others: Get contents as plain text
 //
 //	PDF converting and saving
-//	 Microsoft Office: DOC, DOCX, XLSX, PPTX
+//	 Microsoft Office: DOC, DOCX, XLSX, PPTX, DOCX with Enhanced Recognition Mode (fully editable tables and paragraphs)
 //	 Images: JPEG, PNG, BMP, TIFF
-//	 Others: EPUB, DICOM, SVG, XPS, TEX, TXT
+//	 Others: EPUB, DICOM, SVG, SVG(ZIP), XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
+//	 Export with AcroForm: FDF, XFDF, XML
+//
+//	Metadata
+//	 Product Info: JSON with product name, version, release date, and license status
 //
 // Platforms
 //
@@ -107,11 +115,31 @@
 //	The test run from the root package folder:
 //	  go test -v
 //
-// Aspose home
+// License
 //
-//	https://www.aspose.com
+//   - The Go source code is licensed under the MIT License.
 //
-// GitHub.com
+//   - The shared native libraries (DLL, SO, DYLIB) are proprietary and require a commercial license.
 //
-//	https://github.com/aspose-pdf/aspose-pdf-go-cpp
+//     Evaluation version limitations:
+//
+//   - Documents created with an evaluation watermark.
+//
+//   - Limit on number of pages processed (first 4 pages).
+//
+//     For production use, a commercial license is required.
+//
+// Resources
+//
+//	Aspose home: https://www.aspose.com
+//	Product Page: https://products.aspose.com/pdf/go-cpp/
+//	Docs: https://docs.aspose.com/pdf/go-cpp/
+//	Demos: https://products.aspose.app/pdf/family
+//	API Reference: https://reference.aspose.com/pdf/go-cpp/
+//	Examples: https://github.com/aspose-pdf/aspose-pdf-go-cpp/
+//	Blog: https://blog.aspose.com/category/pdf/
+//	Free Support: https://forum.aspose.com/c/pdf
+//	Temporary License: https://purchase.aspose.com/temporary-license
+//	GitHub.com: https://github.com/aspose-pdf/aspose-pdf-go-cpp
+//	pkg.go.dev: https://pkg.go.dev/github.com/aspose-pdf/aspose-pdf-go-cpp
 package asposepdf

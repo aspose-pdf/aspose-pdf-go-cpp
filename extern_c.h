@@ -18,6 +18,7 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void* PDFDocument_New(const char** error);
     ASPOSE_PDF_RUST_SHARED_API void* PDFDocument_Open(const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Release(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API const char* PDFDocument_About(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_set_License(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_As(void* pdfdocumentclass, const char* filename, const char** error);
@@ -55,6 +56,7 @@ extern "C" {
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_NUp(void* pdfdocumentclass, const char* filename, int columns, int rows, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_Tiff(void* pdfdocumentclass, int resolutionDPI, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_DocXEnhanced(void* pdfdocumentclass, const char* filename, const char** error);
+    ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Save_SvgZip(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Fdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xfdf(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_RUST_SHARED_API void PDFDocument_Export_Xml(void* pdfdocumentclass, const char* filename, const char** error);

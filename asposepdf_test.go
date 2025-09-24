@@ -334,6 +334,32 @@ func TestAppendPages(t *testing.T) {
 	}
 }
 
+func TestAbout(t *testing.T) {
+	// Create a new document instance
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Call About()
+	info, err := doc.About()
+	if err != nil {
+		t.Fatalf("About(): %v", err)
+	}
+
+	// Validate required fields (basic presence checks)
+	if info.Product == "" {
+		t.Errorf("Product field is empty")
+	}
+	if info.Version == "" {
+		t.Errorf("Version field is empty")
+	}
+
+	// Log full structure
+	t.Logf("About result: %+v", info)
+}
+
 func TestExtractText(t *testing.T) {
 	// Create a new document
 	doc, err := New()
@@ -392,6 +418,7 @@ func TestConvertFromPDF(t *testing.T) {
 		{"SaveMarkdown", func(doc *Document, path string) error { return doc.SaveMarkdown(path) }},
 		{"SaveTiff", func(doc *Document, path string) error { return doc.SaveTiff(path) }},
 		{"SaveTiffWithDPI", func(doc *Document, path string) error { return doc.SaveTiff(path, 150) }},
+		{"SaveSvgZip", func(doc *Document, path string) error { return doc.SaveSvgZip(path) }},
 		{"ExportFdf", func(doc *Document, path string) error { return doc.ExportFdf(path) }},
 		{"ExportXfdf", func(doc *Document, path string) error { return doc.ExportXfdf(path) }},
 		{"ExportXml", func(doc *Document, path string) error { return doc.ExportXml(path) }},

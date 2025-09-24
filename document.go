@@ -8,6 +8,7 @@ package asposepdf
 import "C"
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -203,6 +204,33 @@ func (document *Document) Close() error {
 	} else {
 		return nil
 	}
+}
+
+// About returns metadata information about the Aspose.PDF for Go via C++.
+//
+// The metadata is returned as a ProductInfo struct, deserialized from a JSON string.
+// It includes product name, version, release date, licensing status, and related details.
+//
+// See also: product_info.go
+//
+// Example:
+//
+//	info, err := pdf.About()
+func (document *Document) About() (*ProductInfo, error) {
+	var err *C.char
+	jsonStr := C.PDFDocument_About(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return nil, errors.New(err_str)
+	}
+	defer C.c_free_string(jsonStr)
+	goJSON := C.GoString(jsonStr)
+	var info ProductInfo
+	if e := json.Unmarshal([]byte(goJSON), &info); e != nil {
+		return nil, e
+	}
+	return &info, nil
 }
 
 // Save saves previously opened PDF-document.
@@ -867,6 +895,25 @@ func (document *Document) SaveTiff(filename string, resolution_dpi ...int32) err
 		_resolution_dpi = C.int(resolution_dpi[0])
 	}
 	C.PDFDocument_Save_Tiff(document.pdf, _resolution_dpi, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SaveSvgZip saves previously opened PDF-document as SVG-archive with filename.
+//
+// Example:
+//
+//	err := pdf.SaveSvgZip("filename.zip")
+func (document *Document) SaveSvgZip(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_Save_SvgZip(document.pdf, _filename, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

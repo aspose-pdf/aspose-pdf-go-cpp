@@ -21,8 +21,12 @@ Contains unique features for converting PDF to other formats.
 
 - **Microsoft Office:** DOC, DOCX, XLSX, PPTX, DOCX with Enhanced Recognition Mode (fully editable tables and paragraphs)
 - **Images:** JPEG, PNG, BMP, TIFF
-- **Others:** EPUB, DICOM, SVG, XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
+- **Others:** EPUB, DICOM, SVG, SVG(ZIP), XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
 - **Export with AcroForm:** FDF, XFDF, XML
+
+### Metadata
+
+- **Product Info:** JSON with product name, version, release date, and license status
 
 ## Platforms
 
@@ -258,4 +262,4 @@ Applying a license to enable full functionality of the Aspose.PDF for Go using a
     }
 ```
 
-[Home](https://www.aspose.com/) | [Product Page](https://products.aspose.com/pdf/go-cpp/) | [Docs](https://docs.aspose.com/pdf/go-cpp/) | [Demos](https://products.aspose.app/pdf/family) | [API Reference](https://reference.aspose.com/pdf/go-cpp/) | [Examples](https://github.com/aspose-pdf/aspose-pdf-go-cpp/) | [Blog](https://blog.aspose.com/category/pdf/) | [Search](https://search.aspose.com/) | [Free Support](https://forum.aspose.com/c/pdf) |  [Temporary License](https://purchase.aspose.com/temporary-license)
+[Home](https://www.aspose.com/) | [Product Page](https://products.aspose.com/pdf/go-cpp/) | [Docs](https://docs.aspose.com/pdf/go-cpp/) | [Demos](https://products.aspose.app/pdf/family) | [API Reference](https://reference.aspose.com/pdf/go-cpp/) | [Examples](https://github.com/aspose-pdf/aspose-pdf-go-cpp/) | [Blog](https://blog.aspose.com/category/pdf/) | [Search](https://search.aspose.com/) | [Free Support](https://forum.aspose.com/c/pdf) | [Temporary License](https://purchase.aspose.com/temporary-license) | [GitHub.com](https://github.com/aspose-pdf/aspose-pdf-go-cpp) | [pkg.go.dev](https://pkg.go.dev/github.com/aspose-pdf/aspose-pdf-go-cpp)
