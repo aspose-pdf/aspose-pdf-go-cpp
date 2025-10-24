@@ -153,6 +153,46 @@ func TestSplitDocument(t *testing.T) {
 	}
 }
 
+func TestSplit(t *testing.T) {
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	for i := 0; i < 4; i++ {
+		_ = pdf.PageAdd()
+	}
+
+	// Split the PDF-document into 3 parts: pages 1-2, page 3, pages 4 to end
+	pdfs, err := pdf.Split("1-2;3;4-")
+	if err != nil {
+		t.Errorf("Split(): %v", err)
+	}
+
+	if len(pdfs) != 3 {
+		t.Errorf("expected 3 split documents, got %d", len(pdfs))
+	}
+
+	// Defer closing all PDF-documents
+	for _, doc := range pdfs {
+		defer doc.Close()
+	}
+
+	// Check page counts for each resulting PDF-document
+	if len(pdfs) == 3 {
+		count1, _ := pdfs[0].PageCount()
+		assert_eq(t, count1, int32(2))
+
+		count2, _ := pdfs[1].PageCount()
+		assert_eq(t, count2, int32(1))
+
+		count3, _ := pdfs[2].PageCount()
+		assert_eq(t, count3, int32(1))
+	}
+}
+
 func TestSplitAtPage(t *testing.T) {
 	// Create a PDF-document with 4 pages
 	pdf, err := New()
@@ -172,6 +212,36 @@ func TestSplitAtPage(t *testing.T) {
 	}
 
 	// Defer closing both PDF-documents
+	defer left.Close()
+	defer right.Close()
+
+	// Check page counts for each resulting PDF-document
+	countLeft, _ := left.PageCount()
+	assert_eq(t, countLeft, int32(2))
+
+	countRight, _ := right.PageCount()
+	assert_eq(t, countRight, int32(2))
+}
+
+func TestSplitAt(t *testing.T) {
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Errorf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	for i := 0; i < 4; i++ {
+		_ = pdf.PageAdd()
+	}
+
+	// Use the SplitAt method to split the document into two parts at page 2
+	left, right, err := pdf.SplitAt(2)
+	if err != nil {
+		t.Errorf("SplitAt(): %v", err)
+	}
+
+	// Defer closing both resulting documents
 	defer left.Close()
 	defer right.Close()
 
@@ -499,6 +569,7 @@ func TestOrganize(t *testing.T) {
 		{"RemoveHiddenText", (*Document).RemoveHiddenText},
 		{"RemoveImages", (*Document).RemoveImages},
 		{"RemoveJavaScripts", (*Document).RemoveJavaScripts},
+		{"RemoveTables", (*Document).RemoveTables},
 		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
 		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
 		{"PageGrayscale", func(doc *Document) error { return doc.PageGrayscale(1) }},
@@ -513,6 +584,7 @@ func TestOrganize(t *testing.T) {
 		{"PageRemoveAnnotations", func(doc *Document) error { return doc.PageRemoveAnnotations(1) }},
 		{"PageRemoveHiddenText", func(doc *Document) error { return doc.PageRemoveHiddenText(1) }},
 		{"PageRemoveImages", func(doc *Document) error { return doc.PageRemoveImages(1) }},
+		{"PageRemoveTables", func(doc *Document) error { return doc.PageRemoveTables(1) }},
 	}
 
 	for _, test := range organizeFunctions {

@@ -15,8 +15,8 @@ func main() {
 	// Close() releases allocated resources for PDF-document
 	defer pdf_split.Close()
 
-	// SplitDocument(document *Document, pagerange string) creates multiple new PDF-documents by extracting pages from the source PDF-document.
-	pdfs, err := asposepdf.SplitDocument(pdf_split, "1-2;3;4-")
+	// Split(pagerange string) creates multiple new PDF-documents by extracting pages from the current PDF-document
+	pdfs, err := pdf_split.Split("1-2;3;4-")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func main() {
 	// Save each split PDF-document as a separate file
 	for i, pdf := range pdfs {
 		defer pdf.Close()
-		filename := fmt.Sprintf("sample_SplitDocument_part%d.pdf", i+1)
+		filename := fmt.Sprintf("sample_Split_part%d.pdf", i+1)
 		// SaveAs(filename string) saves previously opened PDF-document with new filename
 		err := pdf.SaveAs(filename)
 		if err != nil {

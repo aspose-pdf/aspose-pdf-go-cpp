@@ -14,8 +14,8 @@ func main() {
 	// Close() releases allocated resources for PDF-document
 	defer pdf_split.Close()
 
-	// SplitAtPage(document *Document, page int) splits the PDF-document into two new PDF-documents.
-	left, right, err := asposepdf.SplitAtPage(pdf_split, 2)
+	// SplitAt(page int) splits the current PDF-document into two new PDF-documents.
+	left, right, err := pdf_split.SplitAt(2)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,11 +24,11 @@ func main() {
 	defer right.Close()
 
 	// Save each part as a separate file
-	err = left.SaveAs("sample_SplitAtPage_left.pdf")
+	err = left.SaveAs("sample_SplitAt_left.pdf")
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = right.SaveAs("sample_SplitAtPage_right.pdf")
+	err = right.SaveAs("sample_SplitAt_right.pdf")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -7,14 +7,14 @@ Contains unique features for converting PDF to other formats.
 
 ### PDF Processing
 
-- **Main core operation:** New, Open, Save, SaveAs, Close, SetLicense, Append, AppendPages, MergeDocuments, SplitDocument, SplitAtPage
+- **Main core operation:** New, Open, Save, SaveAs, Close, SetLicense, Append, AppendPages, MergeDocuments, SplitDocument, Split, SplitAtPage, SplitAt
 - **Other core operation:** WordCount, CharacterCount, Bytes
 - **Page main core operation:** Add, Insert, Delete, Count
 - **Page other core operation:** WordCount, CharacterCount, IsBlank
 - **Organize:** Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten
 - **Page organize:** Rotate, SetSize, Grayscale, AddText
-- **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveJavaScripts
-- **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages
+- **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts
+- **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables
 - **Others:** Get contents as plain text
 
 ### PDF converting and saving
