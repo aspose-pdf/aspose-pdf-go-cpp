@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageToSvg(num int32, filename string) saves the specified page as Svg-image file
 	err = pdf.PageToSvg(1, "sample_page1.svg")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

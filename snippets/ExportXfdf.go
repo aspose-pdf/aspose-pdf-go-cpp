@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// ExportXfdf(filename string) exports from previously opened PDF-document with AcroForm to XFDF-document with filename
 	err = pdf.ExportXfdf("sample.xfdf")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

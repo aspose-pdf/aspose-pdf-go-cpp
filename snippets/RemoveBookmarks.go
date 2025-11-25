@@ -9,6 +9,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// RemoveBookmarks() removes bookmarks from PDF-document
 	err = pdf.RemoveBookmarks()
 	if err != nil {
@@ -19,6 +21,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

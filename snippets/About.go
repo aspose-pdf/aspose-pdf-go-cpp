@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// About() returns metadata information about the Aspose.PDF for Go via C++
 	info, err := pdf.About()
 	if err != nil {
@@ -23,6 +25,4 @@ func main() {
 	fmt.Println("  ReleaseDate: ", info.ReleaseDate)
 	fmt.Println("  Producer:    ", info.Producer)
 	fmt.Println("  IsLicensed:  ", info.IsLicensed)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

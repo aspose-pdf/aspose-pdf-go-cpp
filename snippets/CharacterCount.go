@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// CharacterCount() returns character count in PDF-document
 	character_count, err := pdf.CharacterCount()
 	if err != nil {
@@ -17,6 +19,4 @@ func main() {
 	}
 	// Print
 	fmt.Println("Character count:", character_count)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

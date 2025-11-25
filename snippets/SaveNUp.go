@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// SaveNUp(filename string, columns int32, rows int32) saves previously opened PDF-document as N-Up PDF-document with filename
 	err = pdf.SaveNUp("sample_NUp.pdf", 2, 2)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

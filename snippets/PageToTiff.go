@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageToTiff(num int32, resolution_dpi int32, filename string) saves the specified page as Tiff-image file
 	err = pdf.PageToTiff(1, 100, "sample_page1.tiff")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

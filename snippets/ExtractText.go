@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// ExtractText() returns PDF-document contents as plain text
 	txt, err := pdf.ExtractText()
 	if err != nil {
@@ -17,6 +19,4 @@ func main() {
 	}
 	// Print
 	fmt.Println("Extracted text:\n", txt)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

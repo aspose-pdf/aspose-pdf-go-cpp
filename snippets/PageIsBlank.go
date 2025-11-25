@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageIsBlank(num int32) returns page is blank in PDF-document.
 	page_is_blank, err := pdf.PageIsBlank(1)
 	if err != nil {
@@ -17,6 +19,4 @@ func main() {
 	}
 	// Print
 	fmt.Println("The first page is blank?:", page_is_blank == true)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

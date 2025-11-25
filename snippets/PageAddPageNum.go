@@ -9,6 +9,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageAddPageNum(num int32) adds page number on page
 	err = pdf.PageAddPageNum(1)
 	if err != nil {
@@ -19,6 +21,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

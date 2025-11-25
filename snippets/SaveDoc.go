@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// SaveDoc(filename string) saves previously opened PDF-document as Doc-document with filename
 	err = pdf.SaveDoc("sample.doc")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

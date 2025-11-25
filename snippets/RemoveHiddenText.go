@@ -9,6 +9,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// RemoveHiddenText() removes hidden text from PDF-document
 	err = pdf.RemoveHiddenText()
 	if err != nil {
@@ -19,6 +21,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

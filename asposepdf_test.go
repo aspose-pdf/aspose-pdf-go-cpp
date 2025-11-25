@@ -37,25 +37,23 @@ func TestNewAndSave(t *testing.T) {
 
 	pdf_new, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
-	} else {
-		err = pdf_new.SaveAs(pdf_new_filename)
-		if err != nil {
-			t.Errorf("SaveAs(%s): %v", pdf_new_filename, err)
-		} else {
-			pdf_empty, err := Open(pdf_new_filename)
-			if err != nil {
-				t.Errorf("Open(%s): %v", pdf_new_filename, err)
-			} else {
-				err = pdf_empty.Save()
-				if err != nil {
-					t.Errorf("Save(%s): %v", pdf_new_filename, err)
-				}
-			}
-			defer pdf_empty.Close()
-		}
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf_new.Close()
+	err = pdf_new.SaveAs(pdf_new_filename)
+	if err != nil {
+		t.Errorf("SaveAs(%s): %v", pdf_new_filename, err)
+	} else {
+		pdf_empty, err := Open(pdf_new_filename)
+		if err != nil {
+			t.Fatalf("Open(%s): %v", pdf_new_filename, err)
+		}
+		defer pdf_empty.Close()
+		err = pdf_empty.Save()
+		if err != nil {
+			t.Errorf("Save(%s): %v", pdf_new_filename, err)
+		}
+	}
 
 	// Check file size != 0
 	fi, err := os.Stat(pdf_new_filename)
@@ -69,7 +67,7 @@ func TestMergeDocuments(t *testing.T) {
 	// Create the first PDF-document
 	pdf1, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf1.Close()
 
@@ -79,7 +77,7 @@ func TestMergeDocuments(t *testing.T) {
 	// Create the second PDF-document
 	pdf2, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf2.Close()
 
@@ -89,7 +87,7 @@ func TestMergeDocuments(t *testing.T) {
 	// Create the third PDF-document
 	pdf3, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf3.Close()
 
@@ -101,7 +99,7 @@ func TestMergeDocuments(t *testing.T) {
 	// Merge all three documents
 	mergedDoc, err := MergeDocuments([]*Document{pdf1, pdf2, pdf3})
 	if err != nil {
-		t.Errorf("MergeDocuments(): %v", err)
+		t.Fatalf("MergeDocuments(): %v", err)
 	}
 	defer mergedDoc.Close()
 
@@ -117,7 +115,7 @@ func TestSplitDocument(t *testing.T) {
 	// Create a PDF-document with 4 pages
 	pdf, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf.Close()
 
@@ -128,7 +126,7 @@ func TestSplitDocument(t *testing.T) {
 	// Split the PDF-document into 3 parts: pages 1-2, page 3, pages 4 to end
 	pdfs, err := SplitDocument(pdf, "1-2;3;4-")
 	if err != nil {
-		t.Errorf("SplitDocument(): %v", err)
+		t.Fatalf("SplitDocument(): %v", err)
 	}
 
 	if len(pdfs) != 3 {
@@ -157,7 +155,7 @@ func TestSplit(t *testing.T) {
 	// Create a PDF-document with 4 pages
 	pdf, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf.Close()
 
@@ -168,7 +166,7 @@ func TestSplit(t *testing.T) {
 	// Split the PDF-document into 3 parts: pages 1-2, page 3, pages 4 to end
 	pdfs, err := pdf.Split("1-2;3;4-")
 	if err != nil {
-		t.Errorf("Split(): %v", err)
+		t.Fatalf("Split(): %v", err)
 	}
 
 	if len(pdfs) != 3 {
@@ -197,7 +195,7 @@ func TestSplitAtPage(t *testing.T) {
 	// Create a PDF-document with 4 pages
 	pdf, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf.Close()
 
@@ -208,7 +206,7 @@ func TestSplitAtPage(t *testing.T) {
 	// Split the PDF-document into two parts: first 2 pages, and remaining pages
 	left, right, err := SplitAtPage(pdf, 2)
 	if err != nil {
-		t.Errorf("SplitAtPage(): %v", err)
+		t.Fatalf("SplitAtPage(): %v", err)
 	}
 
 	// Defer closing both PDF-documents
@@ -227,7 +225,7 @@ func TestSplitAt(t *testing.T) {
 	// Create a PDF-document with 4 pages
 	pdf, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf.Close()
 
@@ -238,7 +236,7 @@ func TestSplitAt(t *testing.T) {
 	// Use the SplitAt method to split the document into two parts at page 2
 	left, right, err := pdf.SplitAt(2)
 	if err != nil {
-		t.Errorf("SplitAt(): %v", err)
+		t.Fatalf("SplitAt(): %v", err)
 	}
 
 	// Defer closing both resulting documents
@@ -254,8 +252,11 @@ func TestSplitAt(t *testing.T) {
 }
 
 func TestPages(t *testing.T) {
-
-	pdf, _ := New()
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
 	defer pdf.Close()
 
 	// Add page
@@ -273,8 +274,11 @@ func TestPages(t *testing.T) {
 }
 
 func TestStats(t *testing.T) {
-
-	pdf, _ := New()
+	// Create a PDF-document with 4 pages
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
 	defer pdf.Close()
 
 	// Text with stamp: "Evaluation Only. Created with Aspose.PDF ..."
@@ -311,7 +315,7 @@ func TestAppend(t *testing.T) {
 	// Create the first PDF-document
 	pdf1, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf1.Close()
 
@@ -327,7 +331,7 @@ func TestAppend(t *testing.T) {
 	// Create the second PDF-document
 	pdf2, err := New()
 	if err != nil {
-		t.Errorf("New(): %v", err)
+		t.Fatalf("New(): %v", err)
 	}
 	defer pdf2.Close()
 
@@ -402,32 +406,6 @@ func TestAppendPages(t *testing.T) {
 			assert_eq(t, count, tt.wantPages)
 		})
 	}
-}
-
-func TestAbout(t *testing.T) {
-	// Create a new document instance
-	doc, err := New()
-	if err != nil {
-		t.Fatalf("New(): %v", err)
-	}
-	defer doc.Close()
-
-	// Call About()
-	info, err := doc.About()
-	if err != nil {
-		t.Fatalf("About(): %v", err)
-	}
-
-	// Validate required fields (basic presence checks)
-	if info.Product == "" {
-		t.Errorf("Product field is empty")
-	}
-	if info.Version == "" {
-		t.Errorf("Version field is empty")
-	}
-
-	// Log full structure
-	t.Logf("About result: %+v", info)
 }
 
 func TestExtractText(t *testing.T) {
@@ -551,6 +529,7 @@ func TestOrganize(t *testing.T) {
 	organizeFunctions := []organizeFunction{
 		{"Optimize", (*Document).Optimize},
 		{"OptimizeResource", (*Document).OptimizeResource},
+		{"OptimizeFileSize", func(doc *Document) error { return doc.OptimizeFileSize(25) }},
 		{"Grayscale", (*Document).Grayscale},
 		{"Rotate", func(doc *Document) error { return doc.Rotate(RotationOn270) }},
 		{"SetBackground", func(doc *Document) error { return doc.SetBackground(255, 255, 200) }},
@@ -561,7 +540,12 @@ func TestOrganize(t *testing.T) {
 		{"AddPageNum", (*Document).AddPageNum},
 		{"AddTextHeader", func(doc *Document) error { return doc.AddTextHeader("Header") }},
 		{"AddTextFooter", func(doc *Document) error { return doc.AddTextFooter("Footer") }},
+		{"AddWatermark", func(doc *Document) error {
+			return doc.AddWatermark("Watermark", "Arial", 16, "#010101", 100, 100, 45, true, 0.5)
+		}},
 		{"Flatten", (*Document).Flatten},
+		{"EmbedFonts", (*Document).EmbedFonts},
+		{"UnembedFonts", (*Document).UnembedFonts},
 		{"RemoveAnnotations", (*Document).RemoveAnnotations},
 		{"RemoveAttachments", (*Document).RemoveAttachments},
 		{"RemoveBlankPages", (*Document).RemoveBlankPages},
@@ -570,6 +554,7 @@ func TestOrganize(t *testing.T) {
 		{"RemoveImages", (*Document).RemoveImages},
 		{"RemoveJavaScripts", (*Document).RemoveJavaScripts},
 		{"RemoveTables", (*Document).RemoveTables},
+		{"RemoveWatermarks", (*Document).RemoveWatermarks},
 		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
 		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
 		{"PageGrayscale", func(doc *Document) error { return doc.PageGrayscale(1) }},
@@ -581,10 +566,14 @@ func TestOrganize(t *testing.T) {
 		{"PageAddPageNum", func(doc *Document) error { return doc.PageAddPageNum(1) }},
 		{"PageAddTextHeader", func(doc *Document) error { return doc.PageAddTextHeader(1, "Page Header") }},
 		{"PageAddTextFooter", func(doc *Document) error { return doc.PageAddTextFooter(1, "Page Footer") }},
+		{"PageAddWatermark", func(doc *Document) error {
+			return doc.PageAddWatermark(1, "Watermark", "Arial", 16, "#010101", 100, 100, 45, true, 0.5)
+		}},
 		{"PageRemoveAnnotations", func(doc *Document) error { return doc.PageRemoveAnnotations(1) }},
 		{"PageRemoveHiddenText", func(doc *Document) error { return doc.PageRemoveHiddenText(1) }},
 		{"PageRemoveImages", func(doc *Document) error { return doc.PageRemoveImages(1) }},
 		{"PageRemoveTables", func(doc *Document) error { return doc.PageRemoveTables(1) }},
+		{"PageRemoveWatermarks", func(doc *Document) error { return doc.PageRemoveWatermarks(1) }},
 	}
 
 	for _, test := range organizeFunctions {
@@ -662,4 +651,30 @@ func TestBytes(t *testing.T) {
 
 	// Assert that the byte slice is not empty
 	assert_ne(t, int64(0), int64(len(data)))
+}
+
+func TestAbout(t *testing.T) {
+	// Create a new document instance
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Call About()
+	info, err := doc.About()
+	if err != nil {
+		t.Fatalf("About(): %v", err)
+	}
+
+	// Validate required fields (basic presence checks)
+	if info.Product == "" {
+		t.Errorf("Product field is empty")
+	}
+	if info.Version == "" {
+		t.Errorf("Version field is empty")
+	}
+
+	// Log full structure
+	t.Logf("About result: %+v", info)
 }

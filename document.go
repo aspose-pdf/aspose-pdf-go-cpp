@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"runtime"
 	"strings"
 	"unsafe"
 )
@@ -31,6 +32,7 @@ type Document struct {
 //	 		// working with new PDF-document
 //		}
 func New() (*Document, error) {
+	runtime.LockOSThread()
 	var err *C.char
 	doc := C.PDFDocument_New(&err)
 	err_str := C.GoString(err)
@@ -53,6 +55,7 @@ func New() (*Document, error) {
 //	 		// working with open PDF-document
 //		}
 func Open(filename string) (*Document, error) {
+	runtime.LockOSThread()
 	var err *C.char
 	_filename := C.CString(filename)
 	defer C.free(unsafe.Pointer(_filename))
@@ -212,6 +215,7 @@ func SplitAtPage(document *Document, page int) (*Document, *Document, error) {
 //
 //	defer pdf.Close()
 func (document *Document) Close() error {
+	defer runtime.UnlockOSThread()
 	var err *C.char
 	C.PDFDocument_Release(document.pdf, &err)
 	document.pdf = nil
@@ -381,6 +385,23 @@ func (document *Document) OptimizeResource() error {
 	}
 }
 
+// OptimizeFileSize optimizes size of PDF-document with image compression quality.
+//
+// Example:
+//
+//	err := pdf.OptimizeFileSize(50)
+func (document *Document) OptimizeFileSize(imageQuality int32) error {
+	var err *C.char
+	C.PDFDocument_OptimizeFileSize(document.pdf, C.int(imageQuality), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // Repair repaires PDF-document.
 //
 // Example:
@@ -423,6 +444,40 @@ func (document *Document) Grayscale() error {
 func (document *Document) Flatten() error {
 	var err *C.char
 	C.PDFDocument_Flatten(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// EmbedFonts embeds fonts a PDF-document.
+//
+// Example:
+//
+//	err := pdf.EmbedFonts()
+func (document *Document) EmbedFonts() error {
+	var err *C.char
+	C.PDFDocument_EmbedFonts(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// UnembedFonts unembeds fonts a PDF-document.
+//
+// Example:
+//
+//	err := pdf.UnembedFonts()
+func (document *Document) UnembedFonts() error {
+	var err *C.char
+	C.PDFDocument_UnembedFonts(document.pdf, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
@@ -568,6 +623,23 @@ func (document *Document) RemoveTables() error {
 	}
 }
 
+// RemoveWatermarks removes watermarks from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveWatermarks()
+func (document *Document) RemoveWatermarks() error {
+	var err *C.char
+	C.PDFDocument_RemoveWatermarks(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // SetBackground sets PDF-document background color.
 //
 // Example:
@@ -703,6 +775,33 @@ func (document *Document) AddTextFooter(footer string) error {
 	_footer := C.CString(footer)
 	defer C.free(unsafe.Pointer(_footer))
 	C.PDFDocument_AddTextFooter(document.pdf, _footer, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// AddWatermark adds watermark to PDF-document.
+//
+// Example:
+//
+//	err := pdf.AddWatermark("Watermark", "Arial", 16, "#010101", 100, 100, 45, true, 0.5)
+func (document *Document) AddWatermark(text string, fontName string, fontSize float64, foregroundColor string, xPosition int32, yPosition int32, rotation int32, isBackground bool, opacity float64) error {
+	var err *C.char
+	_text := C.CString(text)
+	defer C.free(unsafe.Pointer(_text))
+	_fontName := C.CString(fontName)
+	defer C.free(unsafe.Pointer(_fontName))
+	_foregroundColor := C.CString(foregroundColor)
+	defer C.free(unsafe.Pointer(_foregroundColor))
+	_isBackground := 0
+	if isBackground {
+		_isBackground = 1
+	}
+	C.PDFDocument_AddWatermark(document.pdf, _text, _fontName, C.double(fontSize), _foregroundColor, C.int(xPosition), C.int(yPosition), C.int(rotation), C.int(_isBackground), C.double(opacity), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
@@ -1480,12 +1579,39 @@ func (document *Document) PageAddTextHeader(num int32, header string) error {
 //
 // Example:
 //
-//	err := pdf.PageAddTextFooter("Footer")
+//	err := pdf.PageAddTextFooter(1, "Footer")
 func (document *Document) PageAddTextFooter(num int32, footer string) error {
 	var err *C.char
 	_footer := C.CString(footer)
 	defer C.free(unsafe.Pointer(_footer))
 	C.PDFDocument_Page_AddTextFooter(document.pdf, C.int(num), _footer, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageAddWatermark adds watermark on page.
+//
+// Example:
+//
+//	err := pdf.PageAddWatermark(1, "Watermark", "Arial", 16, "#010101", 100, 100, 45, true, 0.5)
+func (document *Document) PageAddWatermark(num int32, text string, fontName string, fontSize float64, foregroundColor string, xPosition int32, yPosition int32, rotation int32, isBackground bool, opacity float64) error {
+	var err *C.char
+	_text := C.CString(text)
+	defer C.free(unsafe.Pointer(_text))
+	_fontName := C.CString(fontName)
+	defer C.free(unsafe.Pointer(_fontName))
+	_foregroundColor := C.CString(foregroundColor)
+	defer C.free(unsafe.Pointer(_foregroundColor))
+	_isBackground := 0
+	if isBackground {
+		_isBackground = 1
+	}
+	C.PDFDocument_Page_AddWatermark(document.pdf, C.int(num), _text, _fontName, C.double(fontSize), _foregroundColor, C.int(xPosition), C.int(yPosition), C.int(rotation), C.int(_isBackground), C.double(opacity), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
@@ -1554,6 +1680,23 @@ func (document *Document) PageRemoveImages(num int32) error {
 func (document *Document) PageRemoveTables(num int32) error {
 	var err *C.char
 	C.PDFDocument_Page_RemoveTables(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveWatermarks removes watermarks in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveWatermarks(1)
+func (document *Document) PageRemoveWatermarks(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveWatermarks(document.pdf, C.int(num), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

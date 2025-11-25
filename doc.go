@@ -9,10 +9,11 @@
 //	 Other core operation: WordCount, CharacterCount, Bytes
 //	 Page main core operation: Add, Insert, Delete, Count
 //	 Page other core operation: WordCount, CharacterCount, IsBlank
-//	 Organize: Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten
-//	 Page organize: Rotate, SetSize, Grayscale, AddText
-//	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts
-//	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables
+//	 Organize: Optimize, OptimizeResource, OptimizeFileSize, Grayscale, Rotate, SetBackground, Repair, Flatten, AddPageNum, AddHeader, AddFooter, AddWatermark
+//	 Page organize: Rotate, SetSize, Grayscale, AddPageNum, AddText, AddHeader, AddFooter, AddWatermark
+//	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks
+//	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks
+//	 Font embedding: EmbedFonts and UnembedFonts
 //	 Others: Get contents as plain text
 //
 //	PDF converting and saving
@@ -86,6 +87,8 @@
 //		if err != nil {
 //			log.Fatal(err)
 //		}
+//		// Release allocated resources
+//		defer pdf.Close()
 //		// Add new page
 //		err = pdf.PageAdd()
 //		if err != nil {
@@ -106,8 +109,6 @@
 //		if err != nil {
 //			log.Fatal(err)
 //		}
-//		// Release allocated resources
-//		defer pdf.Close()
 //	}
 //
 // Testing

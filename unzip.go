@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-const verLibsTag = "v1.25.10"
+const verLibsTag = "v1.25.11"
 const repoLibsURL = "https://raw.githubusercontent.com/aspose-pdf/aspose-pdf-go-cpp-libs/"
 const repoLibsDir = "libs/"
 

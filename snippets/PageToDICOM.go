@@ -9,11 +9,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageToDICOM(num int32, resolution_dpi int32, filename string) saves the specified page as DICOM-image file
 	err = pdf.PageToDICOM(1, 100, "sample_page1.dcm")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

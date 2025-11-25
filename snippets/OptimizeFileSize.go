@@ -11,11 +11,14 @@ func main() {
 	}
 	// Close() releases allocated resources for PDF-document
 	defer pdf.Close()
-	// SetLicense(filename string) licenses with filename
-	err = pdf.SetLicense("Aspose.PDF.GoViaCPP.lic")
+	// OptimizeFileSize(imageQuality int32) optimizes size of PDF-document with image compression quality
+	err = pdf.OptimizeFileSize(20)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Working with PDF-document
-	// ...
+	// SaveAs(filename string) saves previously opened PDF-document with new filename
+	err = pdf.SaveAs("sample_OptimizeFileSize.pdf")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

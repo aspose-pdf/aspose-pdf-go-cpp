@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageWordCount(num int32) returns word count on specified page in PDF-document.
 	page_word_count, err := pdf.PageWordCount(1)
 	if err != nil {
@@ -17,6 +19,4 @@ func main() {
 	}
 	// Print
 	fmt.Println("Word count on the first page:", page_word_count)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }

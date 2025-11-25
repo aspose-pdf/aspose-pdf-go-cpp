@@ -11,10 +11,11 @@ Contains unique features for converting PDF to other formats.
 - **Other core operation:** WordCount, CharacterCount, Bytes
 - **Page main core operation:** Add, Insert, Delete, Count
 - **Page other core operation:** WordCount, CharacterCount, IsBlank
-- **Organize:** Optimize, OptimizeResource, Grayscale, Rotate, SetBackground, Repair, Flatten
-- **Page organize:** Rotate, SetSize, Grayscale, AddText
-- **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts
-- **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables
+- **Organize:** Optimize, OptimizeResource, OptimizeFileSize, Grayscale, Rotate, SetBackground, Repair, Flatten, AddPageNum, AddHeader, AddFooter, AddWatermark
+- **Page organize:** Rotate, SetSize, Grayscale, AddPageNum, AddText, AddHeader, AddFooter, AddWatermark
+- **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks
+- **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks
+- **Font embedding:** EmbedFonts and UnembedFonts
 - **Others:** Get contents as plain text
 
 ### PDF converting and saving
@@ -122,6 +123,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Release allocated resources
+	defer pdf.Close()
 	// Add new page
 	err = pdf.PageAdd()
 	if err != nil {
@@ -142,8 +145,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Release allocated resources
-	defer pdf.Close()
 }
 ```
 
@@ -165,13 +166,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// SaveDocX(filename string) saves previously opened PDF-document as DocX-document with filename
 	err = pdf.SaveDocX("sample.docx")
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }
 ```
 ### Extract Text From Whole PDF
@@ -188,8 +189,9 @@ func main() {
 	pdf, err := asposepdf.Open("sample.pdf")
 	if err != nil {
 		log.Fatal(err)
-
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// ExtractText() returns PDF-document contents as plain text
 	txt, err := pdf.ExtractText()
 	if err != nil {
@@ -197,8 +199,6 @@ func main() {
 	}
 	// Print
 	fmt.Println("Extracted text:\n", txt)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }
 ```
 
@@ -250,6 +250,8 @@ Applying a license to enable full functionality of the Aspose.PDF for Go using a
         if err != nil {
             log.Fatal(err)
         }
+        // Close() releases allocated resources for PDF-document
+        defer pdf.Close()
         // SetLicense(filename string) licenses with filename
         err = pdf.SetLicense("Aspose.PDF.GoViaCPP.lic")
         if err != nil {
@@ -257,8 +259,6 @@ Applying a license to enable full functionality of the Aspose.PDF for Go using a
         }
         // Working with PDF-document
         // ...
-        // Close() releases allocated resources for PDF-document
-        defer pdf.Close()
     }
 ```
 

@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Close() releases allocated resources for PDF-document
+	defer pdf.Close()
 	// PageCharacterCount(num int32) returns character count on specified page in PDF-document.
 	page_character_count, err := pdf.PageCharacterCount(1)
 	if err != nil {
@@ -17,6 +19,4 @@ func main() {
 	}
 	// Print
 	fmt.Println("Character count on the first page:", page_character_count)
-	// Close() releases allocated resources for PDF-document
-	defer pdf.Close()
 }
