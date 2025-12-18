@@ -17,6 +17,7 @@ extern "C" {
 #endif
     ASPOSE_PDF_GO_SHARED_API void* PDFDocument_New(const char** error);
     ASPOSE_PDF_GO_SHARED_API void* PDFDocument_Open(const char* filename, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void* PDFDocument_Open_With_Password(const char* filename, const char *password, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Release(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API const char* PDFDocument_About(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_License(void* pdfdocumentclass, const char* filename, const char** error);
@@ -69,6 +70,10 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Append(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_AppendPages(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char* pagerange, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Save_Memory(void* pdfdocumentclass, unsigned char** bufferOut, int* sizeOut, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Encrypt(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, int cryptoAlgorithm, int usePdf20, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Decrypt(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Permissions(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_Permissions(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);

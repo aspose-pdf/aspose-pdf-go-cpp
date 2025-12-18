@@ -29,3 +29,25 @@ const (
 	PageSizePageLedger int32 = 10 // PageLedger size.
 	PageSizeP11x17     int32 = 11 // P11x17 size.
 )
+
+// Enumeration of possible crypto algorithms.
+type CryptoAlgorithm int32
+const (
+	RC4x40  CryptoAlgorithm = 0 // RC4 with key length 40.
+	RC4x128 CryptoAlgorithm = 1 // RC4 with key length 128.
+	AESx128 CryptoAlgorithm = 2 // AES with key length 128.
+	AESx256 CryptoAlgorithm = 3 // AES with key length 256.
+)
+
+// Bitflag set representing PDF permission capabilities.
+type Permissions int32
+const (
+    PrintDocument                  Permissions = 1 << 2  // 4
+    ModifyContent                  Permissions = 1 << 3  // 8
+    ExtractContent                 Permissions = 1 << 4  // 16
+    ModifyTextAnnotations          Permissions = 1 << 5  // 32
+    FillForm                       Permissions = 1 << 8  // 256
+    ExtractContentWithDisabilities Permissions = 1 << 9  // 512
+    AssembleDocument               Permissions = 1 << 10 // 1024
+    PrintingQuality                Permissions = 1 << 11 // 2048
+)

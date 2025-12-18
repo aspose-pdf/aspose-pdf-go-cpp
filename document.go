@@ -69,6 +69,33 @@ func Open(filename string) (*Document, error) {
 	}
 }
 
+// OpenWithPassword opens a password-protected PDF-document.
+
+// Example:
+//
+//		pdf, err := OpenWithPassword("example.pdf", "password")
+//		if err != nil {
+//			fmt.Errorf("OpenWithPassword(): %v", err)
+//		} else {
+//	 		// working with open PDF-document
+//		}
+func OpenWithPassword(filename string, password string) (*Document, error) {
+	runtime.LockOSThread()
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	_password := C.CString(password)
+	defer C.free(unsafe.Pointer(_password))
+	doc := C.PDFDocument_Open_With_Password(_filename, _password, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if doc != nil {
+		return &Document{doc}, nil
+	} else {
+		return &Document{nil}, errors.New(err_str)
+	}
+}
+
 // MergeDocuments creates a new PDF-document by merging the provided documents.
 //
 // Example:
@@ -1194,6 +1221,86 @@ func (document *Document) Bytes() ([]byte, error) {
 
 	defer C.c_free_buffer(unsafe.Pointer(buf))
 	return C.GoBytes(unsafe.Pointer(buf), size), nil
+}
+
+// Encrypt encrypts PDF-document.
+//
+// Example:
+//
+//	err := pdf.Encrypt("userpassword", "ownerpassword", asposepdf.PrintDocument | asposepdf.ModifyContent | asposepdf.FillForm, asposepdf.AESx128, true)
+func (document *Document) Encrypt(userPassword string, ownerPassword string, permissions Permissions, cryptoAlgorithm CryptoAlgorithm, usePdf20 bool) error {
+	var err *C.char
+	_userPassword := C.CString(userPassword)
+	defer C.free(unsafe.Pointer(_userPassword))
+	_ownerPassword := C.CString(ownerPassword)
+	defer C.free(unsafe.Pointer(_ownerPassword))
+	_usePdf20 := 0
+	if usePdf20 {
+		_usePdf20 = 1
+	}
+	C.PDFDocument_Encrypt(document.pdf, _userPassword, _ownerPassword, C.int(permissions), C.int(cryptoAlgorithm), C.int(_usePdf20), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// Decrypt decrypts PDF-document.
+//
+// Example:
+//
+//	err := pdf.Decrypt()
+func (document *Document) Decrypt() error {
+	var err *C.char
+	C.PDFDocument_Decrypt(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SetPermissions sets permissions for PDF-document.
+//
+// Example:
+//
+//	err := pdf.SetPermissions("userpassword", "ownerpassword", asposepdf.PrintDocument | asposepdf.ModifyContent | asposepdf.FillForm)
+func (document *Document) SetPermissions(userPassword string, ownerPassword string, permissions Permissions) error {
+	var err *C.char
+	_userPassword := C.CString(userPassword)
+	defer C.free(unsafe.Pointer(_userPassword))
+	_ownerPassword := C.CString(ownerPassword)
+	defer C.free(unsafe.Pointer(_ownerPassword))
+	C.PDFDocument_set_Permissions(document.pdf, _userPassword, _ownerPassword, C.int(permissions), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// GetPermissions gets current permissions of PDF-document.
+//
+// Example:
+//
+//	permissions, err := pdf.GetPermissions()
+func (document *Document) GetPermissions() (Permissions, error) {
+	var err *C.char
+	permissions_int := C.PDFDocument_get_Permissions(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return -1, errors.New(err_str)
+	} else {
+		return Permissions(permissions_int), nil
+	}
 }
 
 // PageCount returns page count in PDF-document.

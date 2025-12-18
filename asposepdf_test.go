@@ -653,6 +653,227 @@ func TestBytes(t *testing.T) {
 	assert_ne(t, int64(0), int64(len(data)))
 }
 
+func TestEncryptDecrypt(t *testing.T) {
+	filename := fmt.Sprintf("%s/secure.pdf", t.TempDir())
+
+	// Create new PDF
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	// Save original
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(): %v", err)
+	}
+
+	// Encrypt PDF
+	userPass := "user123"
+	ownerPass := "owner123"
+	perms := PrintDocument | ModifyContent | FillForm
+
+	err = pdf.Encrypt(userPass, ownerPass, perms, AESx128, true)
+	if err != nil {
+		t.Fatalf("Encrypt(): %v", err)
+	}
+
+	// Save encrypted PDF
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(encrypted): %v", err)
+	}
+
+	// Try open without password - must fail
+	_, err = Open(filename)
+	if err == nil {
+		t.Fatalf("Open() without password must fail")
+	}
+
+	// Open with password - must succeed
+	pdf2, err := OpenWithPassword(filename, ownerPass)
+	if err != nil {
+		t.Fatalf("OpenWithPassword(): %v", err)
+	}
+	defer pdf2.Close()
+
+	// Decrypt PDF
+	if err := pdf2.Decrypt(); err != nil {
+		t.Fatalf("Decrypt(): %v", err)
+	}
+
+	// Save decrypted PDF
+	if err := pdf2.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(decrypted): %v", err)
+	}
+
+	// Now opening without password must work
+	_, err = Open(filename)
+	if err != nil {
+		t.Fatalf("Open(decrypted): %v", err)
+	}
+}
+
+func TestPermissions(t *testing.T) {
+	filename := fmt.Sprintf("%s/perms.pdf", t.TempDir())
+
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(): %v", err)
+	}
+
+	userPass := "user123"
+	ownerPass := "owner123"
+	expectedPerms := ExtractContent | ModifyTextAnnotations | PrintingQuality
+
+	// Set permissions
+	if err := pdf.SetPermissions(userPass, ownerPass, expectedPerms); err != nil {
+		t.Fatalf("SetPermissions(): %v", err)
+	}
+
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(): %v", err)
+	}
+
+	// Open the file with password
+	pdf2, err := OpenWithPassword(filename, userPass)
+	if err != nil {
+		t.Fatalf("OpenWithPassword(): %v", err)
+	}
+	defer pdf2.Close()
+
+	// Get permissions
+	perms, err := pdf2.GetPermissions()
+	if err != nil {
+		t.Fatalf("GetPermissions(): %v", err)
+	}
+
+	// Compare results
+	assert_eq(t, perms, expectedPerms)
+}
+
+func TestOpenWithPasswordWrongPass(t *testing.T) {
+	filename := fmt.Sprintf("%s/passfail.pdf", t.TempDir())
+
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	userPass := "user123"
+	ownerPass := "owner123"
+
+	// Encrypt
+	err = pdf.Encrypt(userPass, ownerPass, PrintDocument, AESx128, false)
+	if err != nil {
+		t.Fatalf("Encrypt(): %v", err)
+	}
+
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(): %v", err)
+	}
+
+	// Wrong password must fail
+	_, err = OpenWithPassword(filename, "badpass")
+	if err == nil {
+		t.Fatalf("OpenWithPassword() must fail with wrong password")
+	}
+}
+
+func TestPermissionsCombination(t *testing.T) {
+	all := PrintDocument |
+		ModifyContent |
+		ExtractContent |
+		ModifyTextAnnotations |
+		FillForm |
+		ExtractContentWithDisabilities |
+		AssembleDocument |
+		PrintingQuality
+
+	userPass := "user123"
+	ownerPass := "owner123"
+
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	if err := pdf.SetPermissions(userPass, ownerPass, all); err != nil {
+		t.Fatalf("SetPermissions(): %v", err)
+	}
+
+	got, err := pdf.GetPermissions()
+	if err != nil {
+		t.Fatalf("GetPermissions(): %v", err)
+	}
+
+	assert_eq(t, got, all)
+}
+
+func TestEncryptAlgorithms(t *testing.T) {
+	filename := fmt.Sprintf("%s/cryptoall.pdf", t.TempDir())
+
+	userPass := "user123"
+	ownerPass := "owner123"
+
+	tests := []struct {
+		algo     CryptoAlgorithm
+		usePdf20 bool
+	}{
+		{RC4x40, false},
+		{RC4x128, false},
+		{AESx128, false},
+		{AESx128, true},
+		{AESx256, false},
+		{AESx256, true},
+	}
+
+	perms := PrintDocument
+
+	base, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer base.Close()
+
+	if err := base.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs(): %v", err)
+	}
+
+	for _, tt := range tests {
+		// open fresh copy before encrypting
+		pdf, err := Open(filename)
+		if err != nil {
+			t.Fatalf("Open(): %v", err)
+		}
+
+		// encrypt with selected algorithm
+		err = pdf.Encrypt(userPass, ownerPass, perms, tt.algo, tt.usePdf20)
+		if err != nil {
+			t.Fatalf("Encrypt(%v,usePdf20=%v): %v", tt.algo, tt.usePdf20, err)
+		}
+
+		cryptfilename := fmt.Sprintf("%s/cryptoall_%v_%t.pdf", t.TempDir(), tt.algo, tt.usePdf20)
+
+		if err := pdf.SaveAs(cryptfilename); err != nil {
+			t.Fatalf("SaveAs(%v,usePdf20=%v): %v", tt.algo, tt.usePdf20, err)
+		}
+		pdf.Close()
+
+		// verify password-protected open works
+		_, err = OpenWithPassword(cryptfilename, userPass)
+		if err != nil {
+			t.Fatalf("OpenWithPassword(%v,usePdf20=%v): %v", tt.algo, tt.usePdf20, err)
+		}
+	}
+}
+
 func TestAbout(t *testing.T) {
 	// Create a new document instance
 	doc, err := New()
