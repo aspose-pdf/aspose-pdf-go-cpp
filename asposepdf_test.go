@@ -555,6 +555,8 @@ func TestOrganize(t *testing.T) {
 		{"RemoveJavaScripts", (*Document).RemoveJavaScripts},
 		{"RemoveTables", (*Document).RemoveTables},
 		{"RemoveWatermarks", (*Document).RemoveWatermarks},
+		{"RemoveTextHeaders", (*Document).RemoveTextHeaders},
+		{"RemoveTextFooters", (*Document).RemoveTextFooters},
 		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
 		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
 		{"PageGrayscale", func(doc *Document) error { return doc.PageGrayscale(1) }},
@@ -574,6 +576,8 @@ func TestOrganize(t *testing.T) {
 		{"PageRemoveImages", func(doc *Document) error { return doc.PageRemoveImages(1) }},
 		{"PageRemoveTables", func(doc *Document) error { return doc.PageRemoveTables(1) }},
 		{"PageRemoveWatermarks", func(doc *Document) error { return doc.PageRemoveWatermarks(1) }},
+		{"PageRemoveHeaders", func(doc *Document) error { return doc.PageRemoveTextHeaders(1) }},
+		{"PageRemoveFooters", func(doc *Document) error { return doc.PageRemoveTextFooters(1) }},
 	}
 
 	for _, test := range organizeFunctions {

@@ -11,8 +11,8 @@
 //	 Page other core operation: WordCount, CharacterCount, IsBlank
 //	 Organize: Optimize, OptimizeResource, OptimizeFileSize, Grayscale, Rotate, SetBackground, Repair, Flatten, AddPageNum, AddHeader, AddFooter, AddWatermark
 //	 Page organize: Rotate, SetSize, Grayscale, AddPageNum, AddText, AddHeader, AddFooter, AddWatermark
-//	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks
-//	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks
+//	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks, RemoveTextHeaders, RemoveTextFooters
+//	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks, PageRemoveTextHeaders, PageRemoveTextFooters
 //	 Font embedding: EmbedFonts and UnembedFonts
 //	 Others: Get contents as plain text
 //

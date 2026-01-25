@@ -38,6 +38,8 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveJavaScripts(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveTables(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveWatermarks(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveTextHeaders(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveTextFooters(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Background(void* pdfdocumentclass, int r, int g, int b, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Rotate(void* pdfdocumentclass, int rotation, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_WordCount(void* pdfdocumentclass, const char** error);
@@ -102,6 +104,8 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveImages(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTables(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveWatermarks(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextHeaders(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextFooters(void* pdfdocumentclass, int num, const char** error);
 
 #ifdef __cplusplus
 }

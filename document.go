@@ -667,6 +667,40 @@ func (document *Document) RemoveWatermarks() error {
 	}
 }
 
+// RemoveTextHeaders removes text headers from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveTextHeaders()
+func (document *Document) RemoveTextHeaders() error {
+	var err *C.char
+	C.PDFDocument_RemoveTextHeaders(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveTextFooters removes text footers from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveTextFooters()
+func (document *Document) RemoveTextFooters() error {
+	var err *C.char
+	C.PDFDocument_RemoveTextFooters(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // SetBackground sets PDF-document background color.
 //
 // Example:
@@ -1804,6 +1838,40 @@ func (document *Document) PageRemoveTables(num int32) error {
 func (document *Document) PageRemoveWatermarks(num int32) error {
 	var err *C.char
 	C.PDFDocument_Page_RemoveWatermarks(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveTextHeaders removes text headers in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveTextHeaders(1)
+func (document *Document) PageRemoveTextHeaders(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveTextHeaders(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageRemoveTextFooters removes text footers in page.
+//
+// Example:
+//
+//	err := pdf.PageRemoveTextFooters(1)
+func (document *Document) PageRemoveTextFooters(num int32) error {
+	var err *C.char
+	C.PDFDocument_Page_RemoveTextFooters(document.pdf, C.int(num), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
