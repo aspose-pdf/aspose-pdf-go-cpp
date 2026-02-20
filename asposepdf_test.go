@@ -532,6 +532,7 @@ func TestOrganize(t *testing.T) {
 		{"OptimizeFileSize", func(doc *Document) error { return doc.OptimizeFileSize(25) }},
 		{"Grayscale", (*Document).Grayscale},
 		{"Rotate", func(doc *Document) error { return doc.Rotate(RotationOn270) }},
+		{"Crop", func(doc *Document) error { return doc.Crop(5) }},
 		{"SetBackground", func(doc *Document) error { return doc.SetBackground(255, 255, 200) }},
 		{"ReplaceText", func(doc *Document) error {
 			_ = doc.PageAddText(1, "Hello World")
@@ -558,6 +559,7 @@ func TestOrganize(t *testing.T) {
 		{"RemoveTextHeaders", (*Document).RemoveTextHeaders},
 		{"RemoveTextFooters", (*Document).RemoveTextFooters},
 		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
+		{"PageCrop", func(doc *Document) error { return doc.PageCrop(1, 9.25) }},
 		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
 		{"PageGrayscale", func(doc *Document) error { return doc.PageGrayscale(1) }},
 		{"PageAddText", func(doc *Document) error { return doc.PageAddText(1, "Page-level text") }},

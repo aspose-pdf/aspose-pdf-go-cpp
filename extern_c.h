@@ -42,6 +42,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveTextFooters(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Background(void* pdfdocumentclass, int r, int g, int b, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Rotate(void* pdfdocumentclass, int rotation, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Crop(void* pdfdocumentclass, double margin, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_WordCount(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_CharacterCount(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_ReplaceText(void* pdfdocumentclass, const char* findText, const char* replaceText, const char** error);
@@ -89,6 +90,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_to_Pdf(void* pdfdocumentclass, int num, const char* filename, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Grayscale(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Rotate(void* pdfdocumentclass, int num, int rotation, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Crop(void* pdfdocumentclass, int num, double margin, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_ReplaceText(void* pdfdocumentclass, int num, const char* findText, const char* replaceText, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_AddText(void* pdfdocumentclass, int num, const char* addText, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_set_Size(void* pdfdocumentclass, int num, int pageSize, const char** error);

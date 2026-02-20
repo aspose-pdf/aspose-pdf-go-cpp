@@ -735,6 +735,23 @@ func (document *Document) Rotate(rotation int32) error {
 	}
 }
 
+// Crop crops pages of a PDF-document.
+//
+// Example:
+//
+//	err := pdf.Crop(10)
+func (document *Document) Crop(margin float64) error {
+	var err *C.char
+	C.PDFDocument_Crop(document.pdf, C.double(margin), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // WordCount returns word count in PDF-document.
 //
 // Example:
@@ -1563,6 +1580,23 @@ func (document *Document) PageGrayscale(num int32) error {
 func (document *Document) PageRotate(num int32, rotation int32) error {
 	var err *C.char
 	C.PDFDocument_Page_Rotate(document.pdf, C.int(num), C.int(rotation), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageCrop crops page.
+//
+// Example:
+//
+//	err := pdf.PageCrop(1, 11.5)
+func (document *Document) PageCrop(num int32, margin float64) error {
+	var err *C.char
+	C.PDFDocument_Page_Crop(document.pdf, C.int(num), C.double(margin), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {
