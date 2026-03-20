@@ -807,6 +807,27 @@ func (document *Document) ReplaceText(findText, replaceText string) error {
 	}
 }
 
+// ReplaceFont replaces font in a PDF-document.
+//
+// Example:
+//
+//	err := pdf.ReplaceFont("Times", "Helvetica-Bold")
+func (document *Document) ReplaceFont(findFontName, replaceFontName string) error {
+	var err *C.char
+	_findFontName := C.CString(findFontName)
+	defer C.free(unsafe.Pointer(_findFontName))
+	_replaceFontName := C.CString(replaceFontName)
+	defer C.free(unsafe.Pointer(_replaceFontName))
+	C.PDFDocument_ReplaceFont(document.pdf, _findFontName, _replaceFontName, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // AddPageNum adds page number to a PDF-document.
 //
 // Example:
@@ -1618,6 +1639,27 @@ func (document *Document) PageReplaceText(num int32, findText, replaceText strin
 	_replaceText := C.CString(replaceText)
 	defer C.free(unsafe.Pointer(_replaceText))
 	C.PDFDocument_Page_ReplaceText(document.pdf, C.int(num), _findText, _replaceText, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageReplaceFont replaces font in page.
+//
+// Example:
+//
+//	err := pdf.PageReplaceFont(1, "Courier", "Times")
+func (document *Document) PageReplaceFont(num int32, findFontName, replaceFontName string) error {
+	var err *C.char
+	_findFontName := C.CString(findFontName)
+	defer C.free(unsafe.Pointer(_findFontName))
+	_replaceFontName := C.CString(replaceFontName)
+	defer C.free(unsafe.Pointer(_replaceFontName))
+	C.PDFDocument_Page_ReplaceFont(document.pdf, C.int(num), _findFontName, _replaceFontName, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

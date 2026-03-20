@@ -538,6 +538,7 @@ func TestOrganize(t *testing.T) {
 			_ = doc.PageAddText(1, "Hello World")
 			return doc.ReplaceText("Hello", "Hi")
 		}},
+		{"ReplaceFont", func(doc *Document) error { return doc.ReplaceText("Times", "Courier") }},
 		{"AddPageNum", (*Document).AddPageNum},
 		{"AddTextHeader", func(doc *Document) error { return doc.AddTextHeader("Header") }},
 		{"AddTextFooter", func(doc *Document) error { return doc.AddTextFooter("Footer") }},
@@ -567,6 +568,7 @@ func TestOrganize(t *testing.T) {
 			_ = doc.PageAddText(1, "Replace me")
 			return doc.PageReplaceText(1, "Replace", "Changed")
 		}},
+		{"PageReplaceFont", func(doc *Document) error { return doc.PageReplaceText(1, "Times", "Courier") }},
 		{"PageAddPageNum", func(doc *Document) error { return doc.PageAddPageNum(1) }},
 		{"PageAddTextHeader", func(doc *Document) error { return doc.PageAddTextHeader(1, "Page Header") }},
 		{"PageAddTextFooter", func(doc *Document) error { return doc.PageAddTextFooter(1, "Page Footer") }},
