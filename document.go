@@ -1375,6 +1375,155 @@ func (document *Document) GetPermissions() (Permissions, error) {
 	}
 }
 
+// IsEncrypted gets encrypted status of PDF-document.
+//
+// Example:
+//
+//	encrypted, err := pdf.IsEncrypted()
+func (document *Document) IsEncrypted() (bool, error) {
+	var err *C.char
+	encrypted_int := C.PDFDocument_is_Encrypted(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return false, errors.New(err_str)
+	} else {
+		return encrypted_int != 0, nil
+	}
+}
+
+// IsSigned gets signed status of PDF-document.
+//
+// Example:
+//
+//	signed, err := pdf.IsSigned()
+func (document *Document) IsSigned() (bool, error) {
+	var err *C.char
+	signed_int := C.PDFDocument_is_Signed(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return false, errors.New(err_str)
+	} else {
+		return signed_int != 0, nil
+	}
+}
+
+// SignPKCS7 signs a PDF-document using PKCS#7 digital signatures.
+//
+// Example:
+//
+//	err := pdf.SignPKCS7(1, certBytes, "password123", 100, 100, 50, 150, "Approved", "John Doe", "London", true, imgBytes, "filename_Signed.pdf")
+func (document *Document) SignPKCS7(num int32, signData []byte, pswSign string, setXIndent, setYIndent, setHeight, setWidth int32, reason, contact, location string, isVisible bool, appearanceData []byte, filename string) error {
+	var err *C.char
+
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+
+	_pswSign := C.CString(pswSign)
+	defer C.free(unsafe.Pointer(_pswSign))
+
+	_reason := C.CString(reason)
+	defer C.free(unsafe.Pointer(_reason))
+
+	_contact := C.CString(contact)
+	defer C.free(unsafe.Pointer(_contact))
+
+	_location := C.CString(location)
+	defer C.free(unsafe.Pointer(_location))
+
+	var _signDataPtr *C.uint8_t
+	if len(signData) > 0 {
+		_signDataPtr = (*C.uint8_t)(unsafe.Pointer(&signData[0]))
+	}
+
+	var _appearanceDataPtr *C.uint8_t
+	if len(appearanceData) > 0 {
+		_appearanceDataPtr = (*C.uint8_t)(unsafe.Pointer(&appearanceData[0]))
+	}
+
+	_isVisible := 0
+	if isVisible {
+		_isVisible = 1
+	}
+
+	C.PDFDocument_SignPKCS7(document.pdf, C.int(num), _signDataPtr, C.int(len(signData)), _pswSign, C.int(setXIndent), C.int(setYIndent), C.int(setHeight), C.int(setWidth), _reason, _contact, _location, C.int(_isVisible), _appearanceDataPtr, C.int(len(appearanceData)), _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// SignPKCS7Detached signs a PDF-document using PKCS#7 Detached digital signatures.
+//
+// Example:
+//
+//	err := pdf.SignPKCS7Detached(1, certBytes, "password123", 100, 100, 50, 150, "Approved", "John Doe", "London", true, imgBytes, "filename_Signed_Detached.pdf")
+func (document *Document) SignPKCS7Detached(num int32, signData []byte, pswSign string, setXIndent, setYIndent, setHeight, setWidth int32, reason, contact, location string, isVisible bool, appearanceData []byte, filename string) error {
+	var err *C.char
+
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+
+	_pswSign := C.CString(pswSign)
+	defer C.free(unsafe.Pointer(_pswSign))
+
+	_reason := C.CString(reason)
+	defer C.free(unsafe.Pointer(_reason))
+
+	_contact := C.CString(contact)
+	defer C.free(unsafe.Pointer(_contact))
+
+	_location := C.CString(location)
+	defer C.free(unsafe.Pointer(_location))
+
+	var _signDataPtr *C.uint8_t
+	if len(signData) > 0 {
+		_signDataPtr = (*C.uint8_t)(unsafe.Pointer(&signData[0]))
+	}
+
+	var _appearanceDataPtr *C.uint8_t
+	if len(appearanceData) > 0 {
+		_appearanceDataPtr = (*C.uint8_t)(unsafe.Pointer(&appearanceData[0]))
+	}
+
+	_isVisible := 0
+	if isVisible {
+		_isVisible = 1
+	}
+
+	C.PDFDocument_SignPKCS7Detached(document.pdf, C.int(num), _signDataPtr, C.int(len(signData)), _pswSign, C.int(setXIndent), C.int(setYIndent), C.int(setHeight), C.int(setWidth), _reason, _contact, _location, C.int(_isVisible), _appearanceDataPtr, C.int(len(appearanceData)), _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemoveSigns removes signs from PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemoveSigns("filename_without_signs.pdf")
+func (document *Document) RemoveSigns(filename string) error {
+	var err *C.char
+	_filename := C.CString(filename)
+	defer C.free(unsafe.Pointer(_filename))
+	C.PDFDocument_RemoveSigns(document.pdf, _filename, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:

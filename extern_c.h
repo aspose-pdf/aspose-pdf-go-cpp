@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdint.h>
+#include <stdlib.h>
+
 #if defined(_MSC_VER)
     #define ASPOSE_PDF_GO_SHARED_API __declspec(dllexport)
 #elif defined(__GNUC__)
@@ -78,6 +81,11 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Decrypt(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Permissions(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_Permissions(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Encrypted(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Signed(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_SignPKCS7(void* pdfdocumentclass, int num, const uint8_t* signData, int signLen, const char* pswSign, int setXIndent, int setYIndent, int setHeight, int setWidth, const char* reason, const char* contact, const char* location, int isVisible, const uint8_t* appearanceData, int appearanceLen, const char* filename, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_SignPKCS7Detached(void* pdfdocumentclass, int num, const uint8_t* signData, int signLen, const char* pswSign, int setXIndent, int setYIndent, int setHeight, int setWidth, const char* reason, const char* contact, const char* location, int isVisible, const uint8_t* appearanceData, int appearanceLen, const char* filename, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveSigns(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);

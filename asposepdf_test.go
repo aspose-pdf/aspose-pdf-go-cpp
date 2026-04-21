@@ -4,6 +4,7 @@
 package asposepdf
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"reflect"
@@ -671,6 +672,10 @@ func TestEncryptDecrypt(t *testing.T) {
 	}
 	defer pdf.Close()
 
+	// CHECK: Initial state should be NOT encrypted
+	isEnc, err := pdf.IsEncrypted()
+	assert_eq(t, isEnc, false)
+
 	// Save original
 	if err := pdf.SaveAs(filename); err != nil {
 		t.Fatalf("SaveAs(): %v", err)
@@ -685,6 +690,10 @@ func TestEncryptDecrypt(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Encrypt(): %v", err)
 	}
+
+	// CHECK: Status should be encrypted after Encrypt() call
+	isEnc, err = pdf.IsEncrypted()
+	assert_eq(t, isEnc, true)
 
 	// Save encrypted PDF
 	if err := pdf.SaveAs(filename); err != nil {
@@ -704,10 +713,18 @@ func TestEncryptDecrypt(t *testing.T) {
 	}
 	defer pdf2.Close()
 
+	// CHECK: Opened protected document must still report as encrypted
+	isEnc, err = pdf2.IsEncrypted()
+	assert_eq(t, isEnc, true)
+
 	// Decrypt PDF
 	if err := pdf2.Decrypt(); err != nil {
 		t.Fatalf("Decrypt(): %v", err)
 	}
+
+	// CHECK: Status should return to false after Decrypt()
+	isEnc, err = pdf2.IsEncrypted()
+	assert_eq(t, isEnc, false)
 
 	// Save decrypted PDF
 	if err := pdf2.SaveAs(filename); err != nil {
@@ -880,6 +897,95 @@ func TestEncryptAlgorithms(t *testing.T) {
 			t.Fatalf("OpenWithPassword(%v,usePdf20=%v): %v", tt.algo, tt.usePdf20, err)
 		}
 	}
+}
+
+func TestDigitalSignatures(t *testing.T) {
+	const (
+		testPfxBase64 = "MIIEcQIBAzCCBDcGCSqGSIb3DQEHAaCCBCgEggQkMIIEIDCCAj8GCSqGSIb3DQEHBqCCAjAwggIsAgEAMIICJQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQI4tjRHb+OMLsCAggAgIIB+OAPdXDmh+6qTyjHkumo2euCw4EvRZ8qSha/AAWYespZs8mA9dInLWM33HeDqktHEcZoPf/CCWqQopRA6RPFAYIn9ioR8s3Phd3LmoMPb52SKJMvWjRGRppLyo4gCNZfv37duV8+mKTSyDW1wrtHsZnvLlUHmy8+OcG8zsAAX6YwHTMkafllpRKkB0kmO1boSvHEp5IPsU8u50VpF21OXYNV7D5c4W2O1GrV0a5HD6OyObHJjj+ufPF7nh+qEuPN/b8hm14y+sZPoVSRvwtH+O8VVDxnJWX+y+jGhChLxiYUYRnhBMW6X+cZW9bcpXZIkFdQdPWA1/opOdTguHlXQF1R+JNnUUOtopwX103undyPGl5JGXvLrr6iH2aO1GY1p2Asd1exaQdfwFQynCxlZrKaCc2JBs5Jem5/wWN6rfq+n15tsYvk2gTP+U/icla8wp1NsqqTGOe0dAJNH3kDOwxKVb5gU+fOYbFWI/6iZ3Tdl41W66rE4Gxj937oYJE1KUK3SlxJtL0uK5c3ZN9yMJYdpc9k2HQ1VOssuUKrmpuOcyJhpF4XosHxMyQxPFFVA/TNggb3Dv3cr2Qei+JqF4n4KAqYCY5u0O+y6+R9Ig0L5zCL/n9cWyPyYqqvEH4ICxqUoH05qCJIMdiNlc5w1PYUXKaSRSzK0TCCAdkGCSqGSIb3DQEHAaCCAcoEggHGMIIBwjCCAb4GCyqGSIb3DQEMCgECoIIBhjCCAYIwHAYKKoZIhvcNAQwBAzAOBAgWFTAixF9bPAICCAAEggFgwC4A+R9X2xdbdfz0IKw2f7pe3iJdgLKJPYiUDV2cGfQnM4UuQKu9qIZ3lAzBtQcF09Wy6pwwU63nVHiGZ6y9PunZZ3tIM24I0Ii1Q5PrphvT4z7yXPqI+sv53AhzwpTJ2XHJQRf53PX7V8ujv3k8lfBQ6gYxfFMkrTdZlfiWeoWZSlFMKUzmaRfBFVit5BRUNEgZrySfZxyxULpo+KzQ/b5K0Z69x6Gvj/j21gEkGTEDWhmjECjsPCP+sWDMyB1xOxHimJgmLtSHc7hpdE/xuRBVELxhlFI1lYj3fbWbnMNzeLG+OBaoktbpr9kbsWRM568vLxdV7XZYkaoGEd+SEUTR+Yxyak/DHspkO/o4apjOh24U6GCqfqPl4ucxTMvOiYpobrxPub/sqQPXB0NEsqNPjcYdsT1y1YkYMxO0b1heh8TWat6SYk1dLi1wdV0iGf8LTImqzzUobZNBfrybjzElMCMGCSqGSIb3DQEJFTEWBBRBGCVJ5N72ukaNrJUetg4Rp0/41DAxMCEwCQYFKw4DAhoFAAQU8VT/8VxDX7Sx3p05TO3BNne5YXYECJhmeDAQpwBNAgIIAA=="
+		signPngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAyCAIAAAAlV+npAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAT6SURBVGhD7ZptTFtVGIBbyqUrbddALRA/gtuYEzs2J5sRBQPZcEUgAwvBDQxOUZP5ScwSl/jDfzPxx4wfi3M4rYNVAkwWZygy4w/RkoyxzVkZg4nMNBaQkVKgdP3At56TI8y2XPWe23MTnx/AfeHXk/c8vTcX+eLioux/+JGAv0uTQDDQ7xzAF/SRtqz9Pa8XWcp6x+z4mjISPoadg6crW2vhB02Suqu2Iz8zD83pIdXN+mV6bO+pfSpd6KFSbVDlKWkxi7BfkpQFqapuq/cpp4vrklO2ObfvSUa+bMM9+C/oIElZkCrH3Ln7diSFDBPh6/QJ5KvcWtPu6PzzT6ggPVmQqiOD76/dGkzJuY5HQPqEqUHJaf27O56i50tigYdUbTlSsNo4ual8AY+WwHn0tiaf38NZzceqjBV4KhxS2iySqnsfWI1Hy/Frpx597NZAKAj7NTJ1FU+FQ0qyXuzavyxVkXBNzMHXuk01Wfp1aCIgkpH12aV2y3DTzalajuJ62kCve2Pa9rslb+GRoEhDFpypZ754yZAVWFPgxaNInP9uRuHVQrA0Sg0eCYoEZC34FyBVcGcQLVWIa3b15Egi7NTG9HvwSGgkIKux+8CQ92LsVM0M6of75DVr6p7cEn4AogTrsnim6qzNt05ppJQqAtOy/lGq2qo/pZQqAruyZn2zla21PFN1tPyduw134RE12JUFd1VXfQ4+qapf3/B4ThUe0YRRWZ+cb2kdbeaTqg2qzYd2HsQjyrAo68fxn2CteKfKsopbhUeUYU4WpAqe7PinisZjTTSoy4I1gbtKfMEDPqmavpQqZqoIdGW1Ozq3HS0sPr4L9gWPYsInVQmTaQNnboiZKgJFWWAKDtRCwNd7ra+kxbyiL56putAndqoItGQhU5zWb96bsbmQO+f+PrYvnndVo9+qxE8VgYosYsrUoPRlXrmjcMr4cEJsX3Cn7gyOrJiqn/sV4qeKILyspab82ik0zMidARHIl8szjoaED85+dOrXNmZTRRBYVkRTCBCx9ZGwryJL6VJfF377obH7AMupIggpq/liazRTCJ0x7GvMP0R8wamsbquXq718UnW88sO4pIogmCxYkCc+fzYQChYUGyKaQtzki3+qnst+viK7DI/ihJCvwt62H4YDpdKFdr6wGODCLw6i4Xak9n91Q+2/ZY77HVIV4wBCqnqa543qXPvTZxIViXgaJ4Q8hq/k7YP6et0J3e/JuQUdnkYC7ReY4pMqpS8FUhV3U4DwL1nJfkUrF8E7bNDo5cHUqAcQUgUH8ITJGvcDiKDyRjrGZyJ/IFVwrwCpOmR6E4/iDa3X9//RF1OpIgh/U4qoMlZYzcf8Hs7W5OM8ejzlDVOpItCSBfxrX+iu6uNdh+9MycQjNqAoC1jqC04WnsaEnbuqvyPGvxydHrJBv4Iqz/Y9ybL0qJ99AJupItDdLETZBlNXbQc82X19Yl42Hmu/2EwVQQxZQH5m3oq+yAMga6kiiCQLiO0LperlnFdhDfGIPcRo1lJ6x+wlLeZwv3YnyzJwv1CqcnUPflP/JZsHECHeZiH+2i/rvG/UgIaQKniohs9Nlk0BYm8W4vLklSJLqVvhur8wxemadl6WnSw7aVpfjH/NKvGRBSBfrtnwSXwtv/HgjjfQnGXiJgtAvrJS1zKeKkI8ZQHgS5Okvl13G75mmzjLkhIy2R/qB+VUhKQ5zAAAAABJRU5ErkJggg=="
+	)
+
+	// Decode Base64 data to byte slices
+	certBytes, _ := base64.StdEncoding.DecodeString(testPfxBase64)
+	imgBytes, _ := base64.StdEncoding.DecodeString(signPngBase64)
+	password := "Pa$$w0rd2023"
+
+	// Setup temporary directory for output files
+	tmpDir := t.TempDir()
+
+	// Sub-test 1: Standard PKCS7 Signature
+	t.Run("SignPKCS7", func(t *testing.T) {
+		pdf, _ := New()
+		defer pdf.Close()
+		_ = pdf.PageAdd()
+		outputPath := fmt.Sprintf("%s/pkcs7_standard.pdf", tmpDir)
+
+		// Applying standard signature on the first page
+		err := pdf.SignPKCS7(1, certBytes, password, 100, 100, 200, 100,
+			"Standard PKCS7", "Contact Info", "Location Info", true, imgBytes, outputPath)
+		if err != nil {
+			t.Fatalf("SignPKCS7 failed: %v", err)
+		}
+
+		// Check signed status
+		pdfSign, _ := Open(outputPath)
+		defer pdfSign.Close()
+		isSig, _ := pdfSign.IsSigned()
+		if !isSig {
+			t.Fatalf("IsSigned() is false")
+		}
+
+		outputPathUnsign := fmt.Sprintf("%s/pkcs7_standard_without_sign.pdf", tmpDir)
+		err = pdfSign.RemoveSigns(outputPathUnsign)
+		if err != nil {
+			t.Fatalf("RemoveSigns failed: %v", err)
+		}
+		// Check signed status
+		pdfUnSign, _ := Open(outputPathUnsign)
+		defer pdfUnSign.Close()
+		isSigUnSig, _ := pdfUnSign.IsSigned()
+		if isSigUnSig {
+			t.Fatalf("IsSigned() is false")
+		}
+
+	})
+
+	// Sub-test 2: PKCS7 Detached Signature
+	t.Run("SignPKCS7Detached", func(t *testing.T) {
+		pdf, _ := New()
+		defer pdf.Close()
+		_ = pdf.PageAdd()
+		outputPath := fmt.Sprintf("%s/pkcs7_detached.pdf", tmpDir)
+
+		// Applying detached signature on the first page
+		err := pdf.SignPKCS7Detached(1, certBytes, password, 100, 100, 200, 100,
+			"Detached PKCS7", "Contact Info", "Location Info", true, imgBytes, outputPath)
+		if err != nil {
+			t.Fatalf("SignPKCS7Detached failed: %v", err)
+		}
+
+		// Check signed status
+		pdfSign, _ := Open(outputPath)
+		defer pdfSign.Close()
+		isSig, _ := pdfSign.IsSigned()
+		if !isSig {
+			t.Fatalf("IsSigned() is false")
+		}
+
+		outputPathUnsign := fmt.Sprintf("%s/pkcs7_detached_without_sign.pdf", tmpDir)
+		err = pdfSign.RemoveSigns(outputPathUnsign)
+		if err != nil {
+			t.Fatalf("RemoveSigns failed: %v", err)
+		}
+		// Check signed status
+		pdfUnSign, _ := Open(outputPathUnsign)
+		defer pdfUnSign.Close()
+		isSigUnSig, _ := pdfUnSign.IsSigned()
+		if isSigUnSig {
+			t.Fatalf("IsSigned() is false")
+		}
+
+	})
 }
 
 func TestAbout(t *testing.T) {
