@@ -25,6 +25,11 @@ Contains unique features for converting PDF to other formats.
 - **Others:** EPUB, DICOM, SVG, SVG(ZIP), XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
 - **Export with AcroForm:** FDF, XFDF, XML
 
+### PDF Compliance
+- **Convert and validate PDF for a specific standard:** Convert, Validate
+- **Remove PDF/A and PDF/UA compliance:** RemovePdfaCompliance, RemovePdfUaCompliance
+- **Check PDF/A and PDF/UA compliance:** IsPdfaCompliant, IsPdfUaCompliant
+
 ### Secure PDF
 - **Open password-protected:** OpenWithPassword
 - **Encrypt/decrypt document:** Encrypt, Decrypt

@@ -988,6 +988,141 @@ func TestDigitalSignatures(t *testing.T) {
 	})
 }
 
+func TestPdfaCompliance(t *testing.T) {
+	filename := fmt.Sprintf("%s/test.pdf", t.TempDir())
+
+	// Create a new PDF
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+
+	// Add one page and some text
+	if err := pdf.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+	_ = pdf.PageAddText(1, "Sample text for PDF/A test")
+
+	// Save PDF to disk
+	if err := pdf.SaveAs(filename); err != nil {
+		pdf.Close()
+		t.Fatalf("SaveAs(): %v", err)
+	}
+	pdf.Close()
+
+	// Re-open PDF
+	pdf, err = Open(filename)
+	if err != nil {
+		t.Fatalf("Open(): %v", err)
+	}
+	defer pdf.Close()
+
+	ok, log, err := pdf.Convert(PDF_A_2A, Delete)
+	if err != nil {
+		t.Fatalf("Convert PDF/A: %v, log: %s", err, log)
+	}
+	t.Logf("Convert PDF/A log: %s", log)
+	assert_eq(t, ok, true)
+
+	ok, log, err = pdf.Validate(PDF_A_2A)
+	if err != nil {
+		t.Fatalf("Validate after convert: %v, log: %s", err, log)
+	}
+	t.Logf("Validate after convert log: %s", log)
+	assert_eq(t, ok, true)
+
+	isPdfa, err := pdf.IsPdfaCompliant()
+	if err != nil {
+		t.Fatalf("IsPdfaCompliant after convert: %v", err)
+	}
+	t.Logf("PDF/A compliance after convert: %v", isPdfa)
+	assert_eq(t, isPdfa, true)
+
+	if err := pdf.RemovePdfaCompliance(); err != nil {
+		t.Fatalf("RemovePdfaCompliance(): %v", err)
+	}
+	t.Logf("PDF/A compliance removed")
+
+	if err := pdf.SaveAs(filename); err != nil {
+		t.Fatalf("SaveAs after RemovePdfaCompliance: %v", err)
+	}
+
+	isPdfa, err = pdf.IsPdfaCompliant()
+	if err != nil {
+		t.Fatalf("IsPdfaCompliant after removal: %v", err)
+	}
+	t.Logf("PDF/A compliance after removal: %v", isPdfa)
+	assert_eq(t, isPdfa, false)
+}
+
+func TestPdfUaCompliance(t *testing.T) {
+	filename := fmt.Sprintf("%s/test.pdf", t.TempDir())
+
+	// Create a new PDF
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+
+	// Add one page and some text
+	if err := pdf.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+	_ = pdf.PageAddText(1, "Sample text for PDF/UA test")
+
+	// Save PDF to disk
+	if err := pdf.SaveAs(filename); err != nil {
+		pdf.Close()
+		t.Fatalf("SaveAs(): %v", err)
+	}
+	pdf.Close()
+
+	// Re-open PDF
+	pdf, err = Open(filename)
+	if err != nil {
+		t.Fatalf("Open(): %v", err)
+	}
+	defer pdf.Close()
+
+	// Initial PDF/UA compliance check
+	isPdfua, err := pdf.IsPdfUaCompliant()
+	if err != nil {
+		t.Fatalf("IsPdfUaCompliant(): %v", err)
+	}
+	t.Logf("Initial PDF/UA compliance: %v", isPdfua)
+	assert_eq(t, isPdfua, false)
+
+	// Validate PDF/UA (expected to fail)
+	ok, log, err := pdf.Validate(PDF_UA_1)
+	if err != nil {
+		t.Logf("Validate PDF/UA returned error (expected): %v", err)
+	}
+	t.Logf("Validate PDF/UA log: %s", log)
+	assert_eq(t, ok, false)
+
+	// Attempt conversion to PDF/UA (will not succeed, just test API call)
+	ok, log, err = pdf.Convert(PDF_UA_1, Delete)
+	if err != nil {
+		t.Logf("Convert PDF/UA returned error (expected): %v", err)
+	}
+	t.Logf("Convert PDF/UA log: %s", log)
+	assert_eq(t, ok, false)
+
+	// Remove PDF/UA compliance (should be safe no-op)
+	if err := pdf.RemovePdfUaCompliance(); err != nil {
+		t.Fatalf("RemovePdfUaCompliance(): %v", err)
+	}
+	t.Logf("PDF/UA compliance removed")
+
+	// Check compliance state again
+	isPdfua, err = pdf.IsPdfUaCompliant()
+	if err != nil {
+		t.Fatalf("IsPdfUaCompliant after removal: %v", err)
+	}
+	t.Logf("PDF/UA compliance after removal: %v", isPdfua)
+	assert_eq(t, isPdfua, false)
+}
+
 func TestAbout(t *testing.T) {
 	// Create a new document instance
 	doc, err := New()

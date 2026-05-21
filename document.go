@@ -1524,6 +1524,121 @@ func (document *Document) RemoveSigns(filename string) error {
 	}
 }
 
+// IsPdfaCompliant gets is a PDF-document PDF/A compliant.
+//
+// Example:
+//
+//	compliant, err := pdf.IsPdfaCompliant()
+func (document *Document) IsPdfaCompliant() (bool, error) {
+	var err *C.char
+	compliant_int := C.PDFDocument_is_PdfaCompliant(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return false, errors.New(err_str)
+	} else {
+		return compliant_int != 0, nil
+	}
+}
+
+// IsPdfUaCompliant gets is a PDF-document PDF/UA compliant.
+//
+// Example:
+//
+//	compliant, err := pdf.IsPdfUaCompliant()
+func (document *Document) IsPdfUaCompliant() (bool, error) {
+	var err *C.char
+	compliant_int := C.PDFDocument_is_PdfUaCompliant(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return false, errors.New(err_str)
+	} else {
+		return compliant_int != 0, nil
+	}
+}
+
+// RemovePdfaCompliance removes PDF/A compliance from a PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemovePdfaCompliance()
+func (document *Document) RemovePdfaCompliance() error {
+	var err *C.char
+	C.PDFDocument_RemovePdfaCompliance(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// RemovePdfUaCompliance removes PDF/UA compliance from a PDF-document.
+//
+// Example:
+//
+//	err := pdf.RemovePdfUaCompliance()
+func (document *Document) RemovePdfUaCompliance() error {
+	var err *C.char
+	C.PDFDocument_RemovePdfUaCompliance(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// Validate validates a PDF-document for compliance with the PDF format.
+//
+// Example:
+//
+//	ok, log, err := pdf.Validate(asposepdf.PDF_A_1B)
+func (document *Document) Validate(pdfFormat PdfFormat) (bool, string, error) {
+	var err *C.char
+	var outputLog *C.char
+	valid := C.PDFDocument_Validate(document.pdf, &outputLog, C.int(pdfFormat), &err)
+
+	logStr := C.GoString(outputLog)
+	C.c_free_string(outputLog)
+
+	errStr := C.GoString(err)
+	C.c_free_string(err)
+
+	if errStr != ERR_OK {
+		return false, logStr, errors.New(errStr)
+	}
+
+	return valid != 0, logStr, nil
+}
+
+// Convert converts a PDF-document into a PDF-document with the specified PDF format.
+//
+// Example:
+//
+//	ok, log, err := pdf.Convert(asposepdf.PDF_A_1B, asposepdf.Delete)
+func (document *Document) Convert(pdfFormat PdfFormat, action ConvertErrorAction) (bool, string, error) {
+	var err *C.char
+	var outputLog *C.char
+
+	success := C.PDFDocument_Convert(document.pdf, &outputLog, C.int(pdfFormat), C.int(action), &err)
+
+	logStr := C.GoString(outputLog)
+	C.c_free_string(outputLog)
+
+	errStr := C.GoString(err)
+	C.c_free_string(err)
+
+	if errStr != ERR_OK {
+		return false, logStr, errors.New(errStr)
+	}
+
+	return success != 0, logStr, nil
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:

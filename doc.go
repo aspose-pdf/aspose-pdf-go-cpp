@@ -22,12 +22,17 @@
 //	 Others: EPUB, DICOM, SVG, SVG(ZIP), XPS, TEX, TXT, MD, N-UP PDF, BOOKLET PDF
 //	 Export with AcroForm: FDF, XFDF, XML
 //
-//     Secure PDF
-//      Open password-protected: OpenWithPassword
-//      Encrypt/decrypt document: Encrypt, Decrypt
-//      Configure access permissions: SetPermissions, GetPermissions
-//      Check encryption status: IsEncrypted
-//      Digital signatures: SignPKCS7, SignPKCS7Detached, IsSigned, RemoveSigns
+//      PDF Compliance
+//       Convert and validate PDF for a specific standard: Convert, Validate
+//       Remove PDF/A and PDF/UA compliance: RemovePdfaCompliance, RemovePdfUaCompliance
+//       Check PDF/A and PDF/UA compliance: IsPdfaCompliant, IsPdfUaCompliant
+//
+//      Secure PDF
+//       Open password-protected: OpenWithPassword
+//       Encrypt/decrypt document: Encrypt, Decrypt
+//       Configure access permissions: SetPermissions, GetPermissions
+//       Check encryption status: IsEncrypted
+//       Digital signatures: SignPKCS7, SignPKCS7Detached, IsSigned, RemoveSigns
 //
 //	Metadata
 //	 Product Info: JSON with product name, version, release date, and license status

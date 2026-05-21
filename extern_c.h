@@ -81,6 +81,12 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Decrypt(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Permissions(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_get_Permissions(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_PdfaCompliant(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_PdfUaCompliant(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemovePdfaCompliance(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemovePdfUaCompliance(void* pdfdocumentclass, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_Convert(void* pdfdocumentclass, const char** outputLog, int pdfFormat, int convertErrorAction, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_Validate(void* pdfdocumentclass, const char** outputLog, int pdfFormat, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Encrypted(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Signed(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_SignPKCS7(void* pdfdocumentclass, int num, const uint8_t* signData, int signLen, const char* pswSign, int setXIndent, int setYIndent, int setHeight, int setWidth, const char* reason, const char* contact, const char* location, int isVisible, const uint8_t* appearanceData, int appearanceLen, const char* filename, const char** error);
