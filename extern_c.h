@@ -77,6 +77,9 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Append(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_AppendPages(void* pdfdocumentclass, const void* otherpdfdocumentclass, const char* pagerange, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Save_Memory(void* pdfdocumentclass, unsigned char** bufferOut, int* sizeOut, const char** error);
+    ASPOSE_PDF_GO_SHARED_API const char* PDFDocument_get_MetaInfo(void* pdfdocumentclass, const char* key, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_MetaInfo(void* pdfdocumentclass, const char* key, const char* value, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_ClearMetaInfo(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Encrypt(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, int cryptoAlgorithm, int usePdf20, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Decrypt(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_set_Permissions(void* pdfdocumentclass, const char* userPassword, const char* ownerPassword, int permissions, const char** error);
@@ -87,6 +90,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemovePdfUaCompliance(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Convert(void* pdfdocumentclass, const char** outputLog, int pdfFormat, int convertErrorAction, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Validate(void* pdfdocumentclass, const char** outputLog, int pdfFormat, const char** error);
+    ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Linearized(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Encrypted(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_is_Signed(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_SignPKCS7(void* pdfdocumentclass, int num, const uint8_t* signData, int signLen, const char* pswSign, int setXIndent, int setYIndent, int setHeight, int setWidth, const char* reason, const char* contact, const char* location, int isVisible, const uint8_t* appearanceData, int appearanceLen, const char* filename, const char** error);
@@ -124,6 +128,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveWatermarks(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextHeaders(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextFooters(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_MergeLayers(void* pdfdocumentclass, int num, const char* newLayerName, const char** error);
 
 #ifdef __cplusplus
 }

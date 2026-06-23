@@ -1639,6 +1639,80 @@ func (document *Document) Convert(pdfFormat PdfFormat, action ConvertErrorAction
 	return success != 0, logStr, nil
 }
 
+// IsLinearized gets a value indicating whether document is linearized.
+//
+// Example:
+//
+//	compliant, err := pdf.IsLinearized()
+func (document *Document) IsLinearized() (bool, error) {
+	var err *C.char
+	linearized_int := C.PDFDocument_is_Linearized(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return false, errors.New(err_str)
+	} else {
+		return linearized_int != 0, nil
+	}
+}
+
+// GetMetaInfo gets meta information value of PDF-document.
+//
+// Example:
+//
+//	value, err := pdf.GetMetaInfo("Author")
+func (document *Document) GetMetaInfo(key string) (string, error) {
+	var err *C.char
+	_key := C.CString(key)
+	defer C.free(unsafe.Pointer(_key))
+	_value := C.PDFDocument_get_MetaInfo(document.pdf, _key, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return "", errors.New(err_str)
+	} else {
+		return C.GoString(_value), nil
+	}
+}
+
+// SetMetaInfo sets meta information value of PDF-document.
+//
+// Example:
+//
+//	err := pdf.SetMetaInfo("Author", "Aspose")
+func (document *Document) SetMetaInfo(key, value string) error {
+	var err *C.char
+	_key := C.CString(key)
+	defer C.free(unsafe.Pointer(_key))
+	_value := C.CString(value)
+	defer C.free(unsafe.Pointer(_value))
+	C.PDFDocument_set_MetaInfo(document.pdf, _key, _value, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// ClearMetaInfo clears all meta information values of PDF-document.
+//
+// Example:
+//
+//	err := pdf.ClearMetaInfo()
+func (document *Document) ClearMetaInfo() error {
+	var err *C.char
+	C.PDFDocument_ClearMetaInfo(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:
@@ -1943,6 +2017,25 @@ func (document *Document) PageAddText(num int32, addText string) error {
 	_addText := C.CString(addText)
 	defer C.free(unsafe.Pointer(_addText))
 	C.PDFDocument_Page_AddText(document.pdf, C.int(num), _addText, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageMergeLayers merges all layers on the page into a single layer with the specified new layer name.
+//
+// Example:
+//
+//	err := pdf.PageMergeLayers(1, "NewLayerName")
+func (document *Document) PageMergeLayers(num int32, newLayerName string) error {
+	var err *C.char
+	_newLayerName := C.CString(newLayerName)
+	defer C.free(unsafe.Pointer(_newLayerName))
+	C.PDFDocument_Page_MergeLayers(document.pdf, C.int(num), _newLayerName, &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

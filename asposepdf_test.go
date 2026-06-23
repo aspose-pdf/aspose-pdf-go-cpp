@@ -583,6 +583,7 @@ func TestOrganize(t *testing.T) {
 		{"PageRemoveWatermarks", func(doc *Document) error { return doc.PageRemoveWatermarks(1) }},
 		{"PageRemoveHeaders", func(doc *Document) error { return doc.PageRemoveTextHeaders(1) }},
 		{"PageRemoveFooters", func(doc *Document) error { return doc.PageRemoveTextFooters(1) }},
+		{"PageMergeLayers", func(doc *Document) error { return doc.PageMergeLayers(1, "newLayerName") }},
 	}
 
 	for _, test := range organizeFunctions {
@@ -1121,6 +1122,113 @@ func TestPdfUaCompliance(t *testing.T) {
 	}
 	t.Logf("PDF/UA compliance after removal: %v", isPdfua)
 	assert_eq(t, isPdfua, false)
+}
+
+func TestIsLinearized(t *testing.T) {
+	// Create a new document
+	pdf, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer pdf.Close()
+
+	// Add a page and some content
+	if err := pdf.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+
+	if err := pdf.PageAddText(1, "Linearization test content"); err != nil {
+		t.Fatalf("PageAddText(): %v", err)
+	}
+
+	if err := pdf.Save(); err != nil {
+		t.Fatalf("Save(): %v", err)
+	}
+
+	// Document should not be linearized initially
+	isLinearizedBefore, err := pdf.IsLinearized()
+	if err != nil {
+		t.Fatalf("IsLinearized(): %v", err)
+	}
+
+	assert_eq(t, isLinearizedBefore, false)
+
+	// Optimize document (linearize)
+	if err := pdf.Optimize(); err != nil {
+		t.Fatalf("Optimize(): %v", err)
+	}
+
+	if err := pdf.Save(); err != nil {
+		t.Fatalf("Save(): %v", err)
+	}
+
+	// Document should be linearized after optimization
+	isLinearizedAfter, err := pdf.IsLinearized()
+	if err != nil {
+		t.Fatalf("IsLinearized(): %v", err)
+	}
+
+	assert_eq(t, isLinearizedAfter, true)
+
+	// Additional consistency check
+	assert_ne(t, isLinearizedBefore, isLinearizedAfter)
+}
+
+func TestMetaInfo(t *testing.T) {
+	// Create a new document
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	const key = "Author"
+
+	// Initially value should be empty
+	value, err := doc.GetMetaInfo(key)
+	if err != nil {
+		t.Fatalf("GetMetaInfo(): %v", err)
+	}
+	assert_eq(t, value, "")
+
+	// Set metadata
+	err = doc.SetMetaInfo(key, "Aspose")
+	if err != nil {
+		t.Fatalf("SetMetaInfo(): %v", err)
+	}
+
+	// Verify metadata value
+	value, err = doc.GetMetaInfo(key)
+	if err != nil {
+		t.Fatalf("GetMetaInfo(): %v", err)
+	}
+	assert_eq(t, value, "Aspose")
+
+	// Change metadata value
+	err = doc.SetMetaInfo(key, "John Doe")
+	if err != nil {
+		t.Fatalf("SetMetaInfo(): %v", err)
+	}
+
+	value, err = doc.GetMetaInfo(key)
+	if err != nil {
+		t.Fatalf("GetMetaInfo(): %v", err)
+	}
+	assert_eq(t, value, "John Doe")
+	assert_ne(t, value, "Aspose")
+
+	// Clear all metadata
+	err = doc.ClearMetaInfo()
+	if err != nil {
+		t.Fatalf("ClearMetaInfo(): %v", err)
+	}
+
+	// Verify metadata was cleared
+	value, err = doc.GetMetaInfo(key)
+	if err != nil {
+		t.Fatalf("GetMetaInfo(): %v", err)
+	}
+	assert_eq(t, value, "")
 }
 
 func TestAbout(t *testing.T) {
