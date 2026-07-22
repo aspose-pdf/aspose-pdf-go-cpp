@@ -14,7 +14,7 @@
 //	 Remove operation: RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks, RemoveTextHeaders, RemoveTextFooters
 //	 Page remove operation: PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks, PageRemoveTextHeaders, PageRemoveTextFooters
 //	 Font operation: ReplaceFont, PageReplaceFont, EmbedFonts and UnembedFonts
-//	 Others: Get contents as plain text, Check document is linearized and Merge layers on page
+//	 Others: Get contents as plain text, Check document is linearized, Get and Merge layers on page
 //
 //	PDF converting and saving
 //	 Microsoft Office: DOC, DOCX, XLSX, PPTX, DOCX with Enhanced Recognition Mode (fully editable tables and paragraphs)

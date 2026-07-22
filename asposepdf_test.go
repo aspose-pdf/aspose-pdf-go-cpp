@@ -584,6 +584,11 @@ func TestOrganize(t *testing.T) {
 		{"PageRemoveHeaders", func(doc *Document) error { return doc.PageRemoveTextHeaders(1) }},
 		{"PageRemoveFooters", func(doc *Document) error { return doc.PageRemoveTextFooters(1) }},
 		{"PageMergeLayers", func(doc *Document) error { return doc.PageMergeLayers(1, "newLayerName") }},
+		{"PageLayers", func(doc *Document) error {
+			layers, err := doc.PageLayers(1)
+			t.Logf("Page layers: %+v", layers)
+			return err
+		}},
 	}
 
 	for _, test := range organizeFunctions {

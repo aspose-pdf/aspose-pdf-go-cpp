@@ -2026,6 +2026,33 @@ func (document *Document) PageAddText(num int32, addText string) error {
 	}
 }
 
+// PageLayers gets layers' names on page.
+//
+// Example:
+//
+//	layers, err := pdf.PageLayers(1)
+func (document *Document) PageLayers(num int32) ([]string, error) {
+	var err *C.char
+	layers := C.PDFDocument_Page_Layers(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return nil, errors.New(err_str)
+	}
+	if layers == nil {
+		return nil, errors.New("PageLayers: unexpected null result")
+	}
+	json_str := C.GoString(layers)
+	C.c_free_string(layers)
+	var parsed struct {
+		Layers []string `json:"Layers"`
+	}
+	if jerr := json.Unmarshal([]byte(json_str), &parsed); jerr != nil {
+		return nil, fmt.Errorf("PageLayers: failed to parse JSON: %w", jerr)
+	}
+	return parsed.Layers, nil
+}
+
 // PageMergeLayers merges all layers on the page into a single layer with the specified new layer name.
 //
 // Example:

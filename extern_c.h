@@ -129,6 +129,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextHeaders(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextFooters(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_MergeLayers(void* pdfdocumentclass, int num, const char* newLayerName, const char** error);
+    ASPOSE_PDF_GO_SHARED_API const char* PDFDocument_Page_Layers(void* pdfdocumentclass, int num, const char** error);
 
 #ifdef __cplusplus
 }
