@@ -11,7 +11,7 @@ Contains unique features for converting PDF to other formats.
 - **Other core operation:** WordCount, CharacterCount, Bytes
 - **Page main core operation:** Add, Insert, Delete, Count
 - **Page other core operation:** WordCount, CharacterCount, IsBlank
-- **Organize:** Optimize, OptimizeResource, OptimizeFileSize, Grayscale, Rotate, SetBackground, Repair, Flatten, AddPageNum, AddTextHeader, AddTextFooter, AddWatermark, ReplaceText, Crop
+- **Organize:** Optimize, OptimizeResource, OptimizeFileSize, Grayscale, Rotate, SetBackground, Repair, Flatten, AddPageNum, AddTextHeader, AddTextFooter, AddWatermark, ReplaceText, Crop, ReversePages, ReorderPages
 - **Page organize:** PageRotate, PageSetSize, PageGrayscale, PageAddPageNum, PageAddText, PageAddTextHeader, PageAddTextFooter, PageAddWatermark, PageReplaceText, PageCrop
 - **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks, RemoveTextHeaders, RemoveTextFooters
 - **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks, PageRemoveTextHeaders, PageRemoveTextFooters

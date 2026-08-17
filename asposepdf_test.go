@@ -1236,6 +1236,76 @@ func TestMetaInfo(t *testing.T) {
 	assert_eq(t, value, "")
 }
 
+func TestReversePages(t *testing.T) {
+	// Create a new PDF document
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Add two pages
+	for i := 1; i <= 2; i++ {
+		if err := doc.PageAdd(); err != nil {
+			t.Fatalf("PageAdd() at index %d: %v", i, err)
+		}
+	}
+
+	// Add num pages
+	if err := doc.AddPageNum(); err != nil {
+		t.Fatalf("AddPageNum(): %v", err)
+	}
+
+	// Reverse the order of pages
+	if err := doc.ReversePages(); err != nil {
+		t.Fatalf("ReversePages(): %v", err)
+	}
+
+	// Extract text from the entire document
+	extracted, err := doc.ExtractText()
+	if err != nil {
+		t.Fatalf("ExtractText(): %v", err)
+	}
+
+	// Expect to see the sequence "21"
+	assert_eq(t, strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(extracted, " ", ""), "\n", ""), "\r", ""), "21")
+}
+
+func TestReorderPages(t *testing.T) {
+	// Create a new PDF document
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Add two pages
+	for i := 1; i <= 2; i++ {
+		if err := doc.PageAdd(); err != nil {
+			t.Fatalf("PageAdd() at index %d: %v", i, err)
+		}
+	}
+
+	// Add num pages
+	if err := doc.AddPageNum(); err != nil {
+		t.Fatalf("AddPageNum(): %v", err)
+	}
+
+	// Reorder pages
+	if err := doc.ReorderPages(2, 1); err != nil {
+		t.Fatalf("ReorderPages(): %v", err)
+	}
+
+	// Extract text from the entire document
+	extracted, err := doc.ExtractText()
+	if err != nil {
+		t.Fatalf("ExtractText(): %v", err)
+	}
+
+	// Expect to see the sequence "21"
+	assert_eq(t, strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(extracted, " ", ""), "\n", ""), "\r", ""), "21")
+}
+
 func TestAbout(t *testing.T) {
 	// Create a new document instance
 	doc, err := New()

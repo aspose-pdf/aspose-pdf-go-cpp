@@ -1713,6 +1713,53 @@ func (document *Document) ClearMetaInfo() error {
 	}
 }
 
+// ReversePages reverses the order of pages in PDF-document.
+//
+// Example:
+//
+//	err := pdf.ReversePages()
+func (document *Document) ReversePages() error {
+	var err *C.char
+	C.PDFDocument_ReversePages(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// ReorderPages reorders pages in PDF-document.
+//
+// Example:
+//
+//	err := pdf.ReorderPages(3, 2, 1)
+func (document *Document) ReorderPages(numPages ...int) error {
+	var err *C.char
+
+	if len(numPages) == 0 {
+		return nil
+	}
+
+	cPages := make([]C.int32_t, len(numPages))
+	for i, v := range numPages {
+		cPages[i] = C.int32_t(v)
+	}
+
+	numPagesPtr := (*C.int32_t)(unsafe.Pointer(&cPages[0]))
+	pagesArrayLen := C.int32_t(len(numPages))
+
+	C.PDFDocument_ReorderPages(document.pdf, numPagesPtr, pagesArrayLen, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:
