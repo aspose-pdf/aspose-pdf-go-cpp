@@ -98,6 +98,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RemoveSigns(void* pdfdocumentclass, const char* filename, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_ReversePages(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_ReorderPages(void* pdfdocumentclass, const int* pagesArray, int pagesArrayLen, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_RedactText(void* pdfdocumentclass, const char* searchPattern, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);

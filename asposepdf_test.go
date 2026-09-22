@@ -1306,6 +1306,58 @@ func TestReorderPages(t *testing.T) {
 	assert_eq(t, strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(extracted, " ", ""), "\n", ""), "\r", ""), "21")
 }
 
+func TestRedactText(t *testing.T) {
+	// Create a new empty PDF-document
+	doc, err := New()
+	if err != nil {
+		t.Fatalf("New(): %v", err)
+	}
+	defer doc.Close()
+
+	// Add a single page
+	if err := doc.PageAdd(); err != nil {
+		t.Fatalf("PageAdd(): %v", err)
+	}
+
+	// Insert some text that contains an identifier we will redact. The identifier follows the pattern "123-45-6789"
+	plain := "Employee ID: 123-45-6789 – Name: Alice Johnson"
+	if err := doc.PageAddText(1, plain); err != nil {
+		t.Fatalf("PageAddText(): %v", err)
+	}
+
+	// Persist the changes so the text really exists in the file
+	if err := doc.Save(); err != nil {
+		t.Fatalf("Save(): %v", err)
+	}
+
+	// Redact the identifier using a regular-expression pattern. The pattern matches any sequence like "123-45-6789"
+	rePattern := `\d{3}-\d{2}-\d{4}`
+	if err := doc.RedactText(rePattern); err != nil {
+		t.Fatalf("RedactText(%q): %v", rePattern, err)
+	}
+
+	// Save the document after redaction
+	if err := doc.Save(); err != nil {
+		t.Fatalf("Save() after RedactText: %v", err)
+	}
+
+	// Extract the text and verify that the identifier disappeared while the remaining content is still present
+	extracted, err := doc.ExtractText()
+	if err != nil {
+		t.Fatalf("ExtractText(): %v", err)
+	}
+
+	// The identifier must not be present
+	if strings.Contains(extracted, "123-45-6789") {
+		t.Errorf("Extracted text still contains the redacted identifier")
+	}
+
+	// The rest of the text must stay unchanged
+	if !strings.Contains(extracted, "Name: Alice Johnson") {
+		t.Errorf("Extracted text lost non-redacted content")
+	}
+}
+
 func TestAbout(t *testing.T) {
 	// Create a new document instance
 	doc, err := New()

@@ -16,7 +16,7 @@ Contains unique features for converting PDF to other formats.
 - **Remove operation:** RemoveAnnotations, RemoveAttachments, RemoveBlankPages, RemoveBookmarks, RemoveHiddenText, RemoveImages, RemoveTables, RemoveJavaScripts, RemoveWatermarks, RemoveTextHeaders, RemoveTextFooters
 - **Page remove operation:** PageRemoveAnnotations, PageRemoveHiddenText, PageRemoveImages, PageRemoveTables, PageRemoveWatermarks, PageRemoveTextHeaders, PageRemoveTextFooters
 - **Font operation:** ReplaceFont, PageReplaceFont, EmbedFonts and UnembedFonts
-- **Others:** Get contents as plain text, Check document is linearized, Get and Merge layers on page
+- **Others:** Get contents as plain text, Check document is linearized, Get and Merge layers on page, Redact permanently and blacks out sensitive text
 
 ### PDF converting and saving
 

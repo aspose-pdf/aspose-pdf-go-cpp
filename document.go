@@ -1760,6 +1760,25 @@ func (document *Document) ReorderPages(numPages ...int) error {
 	}
 }
 
+// RedactText redacts permanently and blacks out sensitive text in PDF-document.
+//
+// Example:
+//
+//	err := pdf.RedactText("Aspose")
+func (document *Document) RedactText(searchPattern string) error {
+	var err *C.char
+	_searchPattern := C.CString(searchPattern)
+	defer C.free(unsafe.Pointer(_searchPattern))
+	C.PDFDocument_RedactText(document.pdf, _searchPattern, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:
