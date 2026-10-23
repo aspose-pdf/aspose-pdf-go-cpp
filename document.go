@@ -1779,6 +1779,33 @@ func (document *Document) RedactText(searchPattern string) error {
 	}
 }
 
+// AddStamp adds stamp to PDF-document.
+//
+// Example:
+//
+//	err := pdf.AddStamp("Stamp", imageBytes, true, 100, 100, 50, 50, asposepdf.RotationOn180, 0.5)
+func (document *Document) AddStamp(alternativeText string, imageData []byte, isBackground bool, xIndent int32, yIndent int32, height int32, width int32, rotation int32, opacity float64) error {
+	var err *C.char
+	_alternativeText := C.CString(alternativeText)
+	defer C.free(unsafe.Pointer(_alternativeText))
+	var _imageDataPtr *C.uint8_t
+	if len(imageData) > 0 {
+		_imageDataPtr = (*C.uint8_t)(unsafe.Pointer(&imageData[0]))
+	}
+	_isBackground := 0
+	if isBackground {
+		_isBackground = 1
+	}
+	C.PDFDocument_AddStamp(document.pdf, _alternativeText, _imageDataPtr, C.int(len(imageData)), C.int(_isBackground), C.int(xIndent), C.int(yIndent), C.int(height), C.int(width), C.int(rotation), C.double(opacity), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
 // PageCount returns page count in PDF-document.
 //
 // Example:
@@ -2398,6 +2425,33 @@ func (document *Document) PageRemoveTextHeaders(num int32) error {
 func (document *Document) PageRemoveTextFooters(num int32) error {
 	var err *C.char
 	C.PDFDocument_Page_RemoveTextFooters(document.pdf, C.int(num), &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return errors.New(err_str)
+	} else {
+		return nil
+	}
+}
+
+// PageAddStamp adds stamp on page.
+//
+// Example:
+//
+//	err := pdf.PageAddStamp(1, "PageStamp", imageBytes, true, 100, 100, 50, 50, asposepdf.RotationOn90, 0.5)
+func (document *Document) PageAddStamp(num int32, alternativeText string, imageData []byte, isBackground bool, xIndent int32, yIndent int32, height int32, width int32, rotation int32, opacity float64) error {
+	var err *C.char
+	_alternativeText := C.CString(alternativeText)
+	defer C.free(unsafe.Pointer(_alternativeText))
+	var _imageDataPtr *C.uint8_t
+	if len(imageData) > 0 {
+		_imageDataPtr = (*C.uint8_t)(unsafe.Pointer(&imageData[0]))
+	}
+	_isBackground := 0
+	if isBackground {
+		_isBackground = 1
+	}
+	C.PDFDocument_Page_AddStamp(document.pdf, C.int(num), _alternativeText, _imageDataPtr, C.int(len(imageData)), C.int(_isBackground), C.int(xIndent), C.int(yIndent), C.int(height), C.int(width), C.int(rotation), C.double(opacity), &err)
 	err_str := C.GoString(err)
 	C.c_free_string(err)
 	if err_str != ERR_OK {

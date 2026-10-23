@@ -522,6 +522,13 @@ func TestConvertFromPDF(t *testing.T) {
 }
 
 func TestOrganize(t *testing.T) {
+	const (
+		imagePngBase64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAAAyCAIAAAAlV+npAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAT6SURBVGhD7ZptTFtVGIBbyqUrbddALRA/gtuYEzs2J5sRBQPZcEUgAwvBDQxOUZP5ScwSl/jDfzPxx4wfi3M4rYNVAkwWZygy4w/RkoyxzVkZg4nMNBaQkVKgdP3At56TI8y2XPWe23MTnx/AfeHXk/c8vTcX+eLioux/+JGAv0uTQDDQ7xzAF/SRtqz9Pa8XWcp6x+z4mjISPoadg6crW2vhB02Suqu2Iz8zD83pIdXN+mV6bO+pfSpd6KFSbVDlKWkxi7BfkpQFqapuq/cpp4vrklO2ObfvSUa+bMM9+C/oIElZkCrH3Ln7diSFDBPh6/QJ5KvcWtPu6PzzT6ggPVmQqiOD76/dGkzJuY5HQPqEqUHJaf27O56i50tigYdUbTlSsNo4ual8AY+WwHn0tiaf38NZzceqjBV4KhxS2iySqnsfWI1Hy/Frpx597NZAKAj7NTJ1FU+FQ0qyXuzavyxVkXBNzMHXuk01Wfp1aCIgkpH12aV2y3DTzalajuJ62kCve2Pa9rslb+GRoEhDFpypZ754yZAVWFPgxaNInP9uRuHVQrA0Sg0eCYoEZC34FyBVcGcQLVWIa3b15Egi7NTG9HvwSGgkIKux+8CQ92LsVM0M6of75DVr6p7cEn4AogTrsnim6qzNt05ppJQqAtOy/lGq2qo/pZQqAruyZn2zla21PFN1tPyduw134RE12JUFd1VXfQ4+qapf3/B4ThUe0YRRWZ+cb2kdbeaTqg2qzYd2HsQjyrAo68fxn2CteKfKsopbhUeUYU4WpAqe7PinisZjTTSoy4I1gbtKfMEDPqmavpQqZqoIdGW1Ozq3HS0sPr4L9gWPYsInVQmTaQNnboiZKgJFWWAKDtRCwNd7ra+kxbyiL56putAndqoItGQhU5zWb96bsbmQO+f+PrYvnndVo9+qxE8VgYosYsrUoPRlXrmjcMr4cEJsX3Cn7gyOrJiqn/sV4qeKILyspab82ik0zMidARHIl8szjoaED85+dOrXNmZTRRBYVkRTCBCx9ZGwryJL6VJfF377obH7AMupIggpq/liazRTCJ0x7GvMP0R8wamsbquXq718UnW88sO4pIogmCxYkCc+fzYQChYUGyKaQtzki3+qnst+viK7DI/ihJCvwt62H4YDpdKFdr6wGODCLw6i4Xak9n91Q+2/ZY77HVIV4wBCqnqa543qXPvTZxIViXgaJ4Q8hq/k7YP6et0J3e/JuQUdnkYC7ReY4pMqpS8FUhV3U4DwL1nJfkUrF8E7bNDo5cHUqAcQUgUH8ITJGvcDiKDyRjrGZyJ/IFVwrwCpOmR6E4/iDa3X9//RF1OpIgh/U4qoMlZYzcf8Hs7W5OM8ejzlDVOpItCSBfxrX+iu6uNdh+9MycQjNqAoC1jqC04WnsaEnbuqvyPGvxydHrJBv4Iqz/Y9ybL0qJ99AJupItDdLETZBlNXbQc82X19Yl42Hmu/2EwVQQxZQH5m3oq+yAMga6kiiCQLiO0LperlnFdhDfGIPcRo1lJ6x+wlLeZwv3YnyzJwv1CqcnUPflP/JZsHECHeZiH+2i/rvG/UgIaQKniohs9Nlk0BYm8W4vLklSJLqVvhur8wxemadl6WnSw7aVpfjH/NKvGRBSBfrtnwSXwtv/HgjjfQnGXiJgtAvrJS1zKeKkI8ZQHgS5Okvl13G75mmzjLkhIy2R/qB+VUhKQ5zAAAAABJRU5ErkJggg=="
+	)
+
+	// Decode Base64 data to byte slices
+	imagePngBytes, _ := base64.StdEncoding.DecodeString(imagePngBase64)
+
 	type organizeFunction struct {
 		name string
 		fn   func(doc *Document) error
@@ -560,6 +567,9 @@ func TestOrganize(t *testing.T) {
 		{"RemoveWatermarks", (*Document).RemoveWatermarks},
 		{"RemoveTextHeaders", (*Document).RemoveTextHeaders},
 		{"RemoveTextFooters", (*Document).RemoveTextFooters},
+		{"AddStamp", func(doc *Document) error {
+			return doc.AddStamp("Stamp", imagePngBytes, true, 100, 100, 50, 50, RotationOn180, 0.5)
+		}},
 		{"PageRotate", func(doc *Document) error { return doc.PageRotate(1, RotationOn270) }},
 		{"PageCrop", func(doc *Document) error { return doc.PageCrop(1, 9.25) }},
 		{"PageSetSize", func(doc *Document) error { return doc.PageSetSize(1, PageSizeA1) }},
@@ -588,6 +598,9 @@ func TestOrganize(t *testing.T) {
 			layers, err := doc.PageLayers(1)
 			t.Logf("Page layers: %+v", layers)
 			return err
+		}},
+		{"PageAddStamp", func(doc *Document) error {
+			return doc.PageAddStamp(1, "PageStamp", imagePngBytes, false, 50, 50, 20, 20, RotationOn90, 0.3)
 		}},
 	}
 

@@ -99,6 +99,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_ReversePages(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_ReorderPages(void* pdfdocumentclass, const int* pagesArray, int pagesArrayLen, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_RedactText(void* pdfdocumentclass, const char* searchPattern, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_AddStamp(void* pdfdocumentclass, const char* alternativeText, const uint8_t* imageData, int imageLen, int isBackground, int xIndent, int yIndent, int height, int width, int rotation, double opacity, const char** error);
     ASPOSE_PDF_GO_SHARED_API int PDFDocument_Page_get_Count(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Add(void* pdfdocumentclass, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_Insert(void* pdfdocumentclass, int num, const char** error);
@@ -133,6 +134,7 @@ extern "C" {
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_RemoveTextFooters(void* pdfdocumentclass, int num, const char** error);
     ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_MergeLayers(void* pdfdocumentclass, int num, const char* newLayerName, const char** error);
     ASPOSE_PDF_GO_SHARED_API const char* PDFDocument_Page_Layers(void* pdfdocumentclass, int num, const char** error);
+    ASPOSE_PDF_GO_SHARED_API void PDFDocument_Page_AddStamp(void* pdfdocumentclass, int num, const char* alternativeText, const uint8_t* imageData, int imageLen, int isBackground, int xIndent, int yIndent, int height, int width, int rotation, double opacity, const char** error);
 
 #ifdef __cplusplus
 }
