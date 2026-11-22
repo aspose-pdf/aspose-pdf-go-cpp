@@ -32,7 +32,7 @@
 //       Encrypt/decrypt document: Encrypt, Decrypt
 //       Configure access permissions: SetPermissions, GetPermissions
 //       Check encryption status: IsEncrypted
-//       Digital signatures: SignPKCS7, SignPKCS7Detached, IsSigned, RemoveSigns
+//       Digital signatures: SignPKCS7, SignPKCS7Detached, IsSigned, RemoveSigns, VerifySigns
 //
 //	Metadata
 //	 Product Info: JSON with product name, version, release date, and license status

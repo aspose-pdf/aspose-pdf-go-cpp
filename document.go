@@ -1524,6 +1524,36 @@ func (document *Document) RemoveSigns(filename string) error {
 	}
 }
 
+// VerifySigns verifies signs from PDF-document.
+//
+// The signature statuses are returned as a slice of PdfSignStatus structs, deserialized from a JSON string.
+// Each struct includes the signature's name and status.
+//
+// See also: pdf_sign_status.go and def.go
+//
+// Example:
+//
+//	signs, err := pdf.VerifySigns()
+func (document *Document) VerifySigns() ([]PdfSignStatus, error) {
+	var err *C.char
+	signs := C.PDFDocument_VerifySigns(document.pdf, &err)
+	err_str := C.GoString(err)
+	C.c_free_string(err)
+	if err_str != ERR_OK {
+		return nil, errors.New(err_str)
+	}
+	if signs == nil {
+		return nil, errors.New("VerifySigns: unexpected null result")
+	}
+	json_str := C.GoString(signs)
+	C.c_free_string(signs)
+	var signsStatus []PdfSignStatus
+	if jerr := json.Unmarshal([]byte(json_str), &signsStatus); jerr != nil {
+		return nil, fmt.Errorf("VerifySigns: failed to parse JSON: %w", jerr)
+	}
+	return signsStatus, nil
+}
+
 // IsPdfaCompliant gets is a PDF-document PDF/A compliant.
 //
 // Example:

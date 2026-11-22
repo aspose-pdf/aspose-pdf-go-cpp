@@ -954,6 +954,14 @@ func TestDigitalSignatures(t *testing.T) {
 			t.Fatalf("IsSigned() is false")
 		}
 
+		// Verify signature status
+		signs, _ := pdfSign.VerifySigns()
+		for _, sign := range signs {
+			if !(sign.Status == SignStatusValid) {
+				t.Errorf("Signature %s status is not VALID", sign.Name)
+			}
+		}
+
 		outputPathUnsign := fmt.Sprintf("%s/pkcs7_standard_without_sign.pdf", tmpDir)
 		err = pdfSign.RemoveSigns(outputPathUnsign)
 		if err != nil {
@@ -989,6 +997,14 @@ func TestDigitalSignatures(t *testing.T) {
 		isSig, _ := pdfSign.IsSigned()
 		if !isSig {
 			t.Fatalf("IsSigned() is false")
+		}
+
+		// Verify signature status
+		signs, _ := pdfSign.VerifySigns()
+		for _, sign := range signs {
+			if !(sign.Status == SignStatusValid) {
+				t.Errorf("Signature %s status is not VALID", sign.Name)
+			}
 		}
 
 		outputPathUnsign := fmt.Sprintf("%s/pkcs7_detached_without_sign.pdf", tmpDir)

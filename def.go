@@ -94,3 +94,12 @@ const (
 	AssembleDocument               Permissions = 1 << 10 // 1024
 	PrintingQuality                Permissions = 1 << 11 // 2048
 )
+
+// Enumeration of possible status of signature.
+type SignStatus string
+
+const (
+	SignStatusValid    SignStatus = "VALID"    // Status is VALID.
+	SignStatusInvalid  SignStatus = "INVALID"  // Status is INVALID.
+	SignStatusInactive SignStatus = "INACTIVE" // Status is INACTIVE.
+)
